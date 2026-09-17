@@ -2253,11 +2253,17 @@ function renderizarConfig(){
   `;
 }
 
+let timeoutFecharModal = null;
 
 /* ============================================================
    19) MODAIS
    ============================================================ */
 function abrirModal(html, travado){
+  // Cancela qualquer fechamento de modal pendente (evita que ele apague o novo)
+  if (timeoutFecharModal){
+    clearTimeout(timeoutFecharModal);
+    timeoutFecharModal = null;
+  }
   const overlay = document.getElementById('modal-overlay');
   const conteudo = document.getElementById('modal-conteudo');
   conteudo.innerHTML = html;
@@ -2265,13 +2271,14 @@ function abrirModal(html, travado){
   overlay.classList.remove('hidden');
   requestAnimationFrame(() => overlay.classList.add('visivel'));
 }
-
 function fecharModal(){
   const overlay = document.getElementById('modal-overlay');
   overlay.classList.remove('visivel');
-  setTimeout(() => {
+  if (timeoutFecharModal) clearTimeout(timeoutFecharModal);
+  timeoutFecharModal = setTimeout(() => {
     overlay.classList.add('hidden');
     document.getElementById('modal-conteudo').innerHTML = '';
+    timeoutFecharModal = null;
   }, 220);
 }
 
