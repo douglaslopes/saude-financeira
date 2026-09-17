@@ -1,0 +1,3350 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0F1B2D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dou &amp; May">
+<meta name="description" content="Nosso cantinho financeiro — Douglas e Mayara 💙💗">
+<title>Saúde Financeira Dou e May</title>
+
+<link id="manifest-link" rel="manifest">
+<link id="apple-icon" rel="apple-touch-icon">
+<link rel="icon" id="favicon">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  /* Tailwind: paleta do nosso lar — esmeralda suave, champanhe, rosa antigo e azul-noite */
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: {
+          esmeralda: {50:'#EDF7F4',100:'#D5EDE6',200:'#A9DBCE',300:'#7CC4B1',400:'#4FA894',500:'#2F7A6B',600:'#266459',700:'#1D4C44',800:'#153630',900:'#0E241F'},
+          champanhe: {100:'#F9F3E4',200:'#F0E2C2',300:'#E4CB92',400:'#D9C08C',500:'#C9A961',600:'#A8873F'},
+          rosa:      {100:'#FBEDF1',200:'#F2D4DD',300:'#E3AEBD',400:'#C98B9B',500:'#B06E80',600:'#8E5566'},
+          noite:     {900:'#0B1420',800:'#122031',700:'#1B2C42',600:'#27405C',500:'#3A5878'}
+        },
+        fontFamily: {
+          sans: ['Nunito','system-ui','-apple-system','Segoe UI','sans-serif'],
+          display: ['"Playfair Display"','Georgia','serif']
+        }
+      }
+    }
+  };
+</script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<style>
+  /* ============================================================
+     ESTILOS BASE — mobile-first, respeitando safe areas do iPhone
+     ============================================================ */
+  :root{
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --azul-douglas: #4A90D9;
+    --rosa-mayara: #E08AA6;
+  }
+
+  *{ -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+
+  html, body{
+    height: 100%;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body{
+    margin: 0;
+    font-family: 'Nunito', system-ui, sans-serif;
+    color: #143530;
+    background:
+      radial-gradient(120% 80% at 15% 0%, #F5F1E8 0%, #F7F3EC 35%, #EAF3F0 100%) fixed;
+    touch-action: pan-y;
+    -webkit-user-select: none;
+    user-select: none;
+    min-height: 100dvh;
+  }
+  html.dark body{
+    color: #EAF3F0;
+    background:
+      radial-gradient(120% 80% at 15% 0%, #17293F 0%, #111E2E 45%, #0B1420 100%) fixed;
+  }
+
+  input, textarea, select{ -webkit-user-select: text; user-select: text; }
+
+  ::-webkit-scrollbar{ width: 0; height: 0; }
+
+  .font-display{ font-family: 'Playfair Display', Georgia, serif; }
+
+  /* ---------- Telas ---------- */
+  .tela{ display: none; }
+  .tela.ativa{ display: block; animation: fadeIn .38s cubic-bezier(.22,1,.36,1) both; }
+  @keyframes fadeIn{ from{ opacity:0; transform: translateY(10px); } to{ opacity:1; transform:none; } }
+  @keyframes popIn{ 0%{ opacity:0; transform: scale(.94); } 100%{ opacity:1; transform: scale(1); } }
+  .pop{ animation: popIn .32s cubic-bezier(.22,1,.36,1) both; }
+
+  /* ---------- Cards ---------- */
+  .card{
+    border-radius: 1.5rem;
+    background: rgba(255,255,255,.88);
+    border: 1px solid rgba(255,255,255,.75);
+    box-shadow: 0 12px 32px -16px rgba(20,53,48,.38);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  html.dark .card{
+    background: rgba(27,44,66,.72);
+    border: 1px solid rgba(255,255,255,.07);
+    box-shadow: 0 12px 32px -16px rgba(0,0,0,.75);
+  }
+
+  .swipe-wrap{
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 12px 32px -16px rgba(20,53,48,.38);
+  }
+  html.dark .swipe-wrap{ box-shadow: 0 12px 32px -16px rgba(0,0,0,.75); }
+
+  /* ---------- Botões ---------- */
+  .btn-primario{
+    display: flex; align-items: center; justify-content: center; gap: .6rem;
+    width: 100%;
+    background: linear-gradient(135deg, #2F7A6B 0%, #256156 100%);
+    color: #fff; font-weight: 800; font-size: 1.05rem;
+    border: none; border-radius: 1.25rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 14px 28px -14px rgba(47,122,107,.95);
+    transition: transform .15s ease, filter .15s ease;
+    cursor: pointer;
+  }
+  .btn-primario:active{ transform: scale(.97); filter: brightness(1.06); }
+
+  .btn-suave{
+    display: flex; align-items: center; justify-content: center; gap: .6rem;
+    width: 100%;
+    background: rgba(47,122,107,.10);
+    color: #256156; font-weight: 800; font-size: 1rem;
+    border: 1px solid rgba(47,122,107,.20);
+    border-radius: 1.25rem;
+    padding: .9rem 1.1rem;
+    transition: transform .15s ease;
+    cursor: pointer;
+  }
+  html.dark .btn-suave{ background: rgba(124,196,177,.12); color: #A9DBCE; border-color: rgba(124,196,177,.22); }
+  .btn-suave:active{ transform: scale(.97); }
+
+  /* ---------- Campos ---------- */
+  .campo{
+    width: 100%;
+    border-radius: 1rem;
+    padding: .85rem 1rem;
+    background: rgba(255,255,255,.94);
+    border: 1px solid rgba(20,53,48,.14);
+    color: #143530;
+    font-size: 1rem;
+    font-family: inherit;
+    font-weight: 600;
+    outline: none;
+    transition: border-color .18s ease, box-shadow .18s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  html.dark .campo{
+    background: rgba(11,20,32,.62);
+    border-color: rgba(255,255,255,.11);
+    color: #EAF3F0;
+  }
+  .campo:focus{ border-color: #2F7A6B; box-shadow: 0 0 0 3px rgba(47,122,107,.18); }
+  .campo::placeholder{ color: rgba(20,53,48,.38); font-weight: 600; }
+  html.dark .campo::placeholder{ color: rgba(234,243,240,.35); }
+
+  select.campo{
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232F7A6B' stroke-width='2.5' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.1rem;
+    padding-right: 2.6rem;
+  }
+
+  .rotulo{
+    display: block;
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    opacity: .55;
+    margin-bottom: .4rem;
+    padding-left: .2rem;
+  }
+
+  /* ---------- Bottom nav + FAB ---------- */
+  #bottom-nav{
+    position: fixed; left: 0; right: 0; bottom: 0;
+    z-index: 40;
+    padding-bottom: var(--safe-bottom);
+    background: rgba(255,255,255,.92);
+    border-top: 1px solid rgba(20,53,48,.08);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+  }
+  html.dark #bottom-nav{
+    background: rgba(11,20,32,.88);
+    border-top: 1px solid rgba(255,255,255,.07);
+  }
+  .nav-item{
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: .2rem; padding: .6rem .2rem .5rem;
+    font-size: .66rem; font-weight: 800;
+    color: rgba(20,53,48,.45);
+    background: none; border: none; cursor: pointer;
+    transition: color .18s ease, transform .18s ease;
+  }
+  html.dark .nav-item{ color: rgba(234,243,240,.42); }
+  .nav-item i{ font-size: 1.15rem; }
+  .nav-item.ativo{ color: #2F7A6B; transform: translateY(-2px); }
+  html.dark .nav-item.ativo{ color: #7CC4B1; }
+
+  #fab{
+    position: fixed;
+    right: 1.15rem;
+    bottom: calc(5.6rem + var(--safe-bottom));
+    z-index: 45;
+    width: 3.9rem; height: 3.9rem;
+    border-radius: 1.5rem;
+    border: none;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; color: #fff;
+    background: linear-gradient(135deg, #2F7A6B 0%, #1D4C44 100%);
+    box-shadow: 0 16px 30px -12px rgba(47,122,107,.95);
+    transition: transform .16s ease;
+    cursor: pointer;
+  }
+  #fab:active{ transform: scale(.92); }
+
+  /* ---------- Modal ---------- */
+  #modal-overlay{
+    position: fixed; inset: 0; z-index: 80;
+    display: flex; align-items: flex-end; justify-content: center;
+    background: rgba(8,16,26,.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity .22s ease;
+    padding: 0;
+  }
+  #modal-overlay.visivel{ opacity: 1; }
+  #modal-conteudo{
+    width: 100%;
+    max-width: 30rem;
+    max-height: 88dvh;
+    overflow-y: auto;
+    border-radius: 1.75rem 1.75rem 0 0;
+    padding: 1.5rem 1.25rem calc(1.5rem + var(--safe-bottom));
+    background: #FFFDF9;
+    transform: translateY(18px);
+    transition: transform .26s cubic-bezier(.22,1,.36,1);
+    -webkit-overflow-scrolling: touch;
+  }
+  html.dark #modal-conteudo{ background: #122031; }
+  #modal-overlay.visivel #modal-conteudo{ transform: translateY(0); }
+  @media (min-width: 640px){
+    #modal-overlay{ align-items: center; }
+    #modal-conteudo{ border-radius: 1.75rem; padding-bottom: 1.5rem; }
+  }
+
+  /* ---------- PIN ---------- */
+  .pin-dot{
+    width: 1rem; height: 1rem; border-radius: 999px;
+    background: rgba(20,53,48,.15);
+    transition: transform .18s ease, background .18s ease;
+  }
+  html.dark .pin-dot{ background: rgba(234,243,240,.18); }
+  .pin-dot.cheio{ background: linear-gradient(135deg,#2F7A6B,#D9C08C); transform: scale(1.22); }
+
+  .pin-key{
+    height: 3.6rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(20,53,48,.10);
+    background: rgba(255,255,255,.9);
+    font-size: 1.4rem; font-weight: 800; color: #143530;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .12s ease, background .12s ease;
+    cursor: pointer;
+  }
+  html.dark .pin-key{ background: rgba(11,20,32,.6); border-color: rgba(255,255,255,.09); color: #EAF3F0; }
+  .pin-key:active{ transform: scale(.94); background: rgba(47,122,107,.15); }
+
+  /* ---------- Toast ---------- */
+  #toast-container{
+    position: fixed;
+    left: 50%; transform: translateX(-50%);
+    top: calc(var(--safe-top) + .8rem);
+    z-index: 120;
+    display: flex; flex-direction: column; gap: .5rem;
+    pointer-events: none;
+    width: max-content; max-width: 92vw;
+  }
+  .toast{
+    display: flex; align-items: center; gap: .6rem;
+    padding: .7rem 1.1rem;
+    border-radius: 999px;
+    font-size: .9rem; font-weight: 800;
+    color: #fff;
+    background: linear-gradient(135deg, #2F7A6B, #1D4C44);
+    box-shadow: 0 12px 26px -12px rgba(0,0,0,.6);
+    animation: toastIn .3s cubic-bezier(.22,1,.36,1) both;
+  }
+  .toast.saindo{ animation: toastOut .35s ease both; }
+  @keyframes toastIn{ from{ opacity:0; transform: translateY(-14px) scale(.94); } to{ opacity:1; transform:none; } }
+  @keyframes toastOut{ to{ opacity:0; transform: translateY(-14px) scale(.94); } }
+
+  /* ---------- Confete ---------- */
+  #confete-canvas{
+    position: fixed; inset: 0; z-index: 200;
+    pointer-events: none; width: 100%; height: 100%;
+  }
+
+  /* ---------- Barra de progresso dos sonhos ---------- */
+  .barra{ height: .7rem; border-radius: 999px; background: rgba(20,53,48,.10); overflow: hidden; }
+  html.dark .barra{ background: rgba(255,255,255,.09); }
+  .barra > span{
+    display: block; height: 100%; border-radius: 999px;
+    background: linear-gradient(90deg, #2F7A6B 0%, #7CC4B1 55%, #D9C08C 100%);
+    transition: width .8s cubic-bezier(.22,1,.36,1);
+  }
+
+  .faixa-autor{ position: absolute; left: 0; top: 0; bottom: 0; width: .38rem; }
+
+  .conteudo-app{ padding-bottom: calc(7.4rem + var(--safe-bottom)); }
+
+  .titulo-tela{ font-size: 1.7rem; line-height: 1.15; }
+
+  .banner-suave{
+    border-radius: 1.25rem;
+    padding: .85rem 1rem;
+    font-size: .88rem; font-weight: 700;
+    background: linear-gradient(135deg, rgba(217,192,140,.28), rgba(124,196,177,.22));
+    border: 1px solid rgba(217,192,140,.4);
+  }
+
+  .skeleton{
+    background: linear-gradient(90deg, rgba(20,53,48,.06) 25%, rgba(20,53,48,.12) 37%, rgba(20,53,48,.06) 63%);
+    background-size: 400% 100%;
+    animation: brilho 1.4s ease infinite;
+    border-radius: 1rem;
+  }
+  html.dark .skeleton{
+    background: linear-gradient(90deg, rgba(255,255,255,.05) 25%, rgba(255,255,255,.12) 37%, rgba(255,255,255,.05) 63%);
+    background-size: 400% 100%;
+  }
+  @keyframes brilho{ 0%{ background-position: 100% 50%; } 100%{ background-position: 0 50%; } }
+
+  pre.regras{
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-size: .72rem;
+    line-height: 1.5;
+    background: rgba(11,20,32,.9);
+    color: #A9DBCE;
+    padding: 1rem;
+    border-radius: 1rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+</style>
+</head>
+
+<body>
+
+  <!-- ============================================================
+       TELA 0 — BOAS-VINDAS / LOGIN
+       ============================================================ -->
+  <section id="tela-login" class="tela">
+    <div class="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12"
+         style="padding-top: calc(var(--safe-top) + 2rem); padding-bottom: calc(var(--safe-bottom) + 2rem);">
+      <div class="text-center mb-9 pop">
+        <div class="w-20 h-20 mx-auto rounded-3xl flex items-center justify-center mb-5"
+             style="background: linear-gradient(135deg,#2F7A6B 0%,#7CC4B1 55%,#D9C08C 100%); box-shadow:0 18px 34px -16px rgba(47,122,107,.9);">
+          <i class="fa-solid fa-heart text-white text-3xl"></i>
+        </div>
+        <h1 class="font-display text-3xl leading-tight mb-2">Saúde Financeira<br>Dou e May</h1>
+        <p class="text-sm font-semibold opacity-60">Nosso cantinho financeiro 💙💗</p>
+      </div>
+
+      <div id="login-opcoes" class="w-full max-w-sm space-y-3.5"></div>
+
+      <p class="text-[.7rem] text-center font-semibold opacity-45 mt-10 max-w-xs leading-relaxed">
+        Seus dados ficam na sua conta Firebase. Só vocês dois têm acesso. 🔒
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TELA DE SETUP (quando o Firebase ainda não foi configurado)
+       ============================================================ -->
+  <section id="tela-setup" class="tela">
+    <div class="min-h-[100dvh] flex flex-col items-center justify-center px-6 py-12">
+      <div class="card p-6 w-full max-w-md">
+        <h2 class="font-display text-2xl mb-3">Falta só um passinho 💚</h2>
+        <p class="text-sm font-semibold opacity-75 leading-relaxed mb-4">
+          Para o app funcionar, é preciso colar as credenciais do <strong>seu</strong> projeto Firebase
+          no objeto <code class="px-1 rounded bg-black/10">firebaseConfig</code>, lá no topo do
+          <code class="px-1 rounded bg-black/10">&lt;script type="module"&gt;</code> deste arquivo.
+        </p>
+        <ol class="text-sm font-semibold opacity-75 leading-relaxed space-y-2 list-decimal pl-5">
+          <li>Crie um projeto em <span class="text-esmeralda-600 dark:text-esmeralda-300">console.firebase.google.com</span></li>
+          <li>Ative <strong>Authentication → Anonymous</strong></li>
+          <li>Crie o <strong>Firestore Database</strong> em modo produção</li>
+          <li>Copie as credenciais em <strong>Configurações do Projeto → Seus apps → Web</strong></li>
+          <li>Cole no <code class="px-1 rounded bg-black/10">firebaseConfig</code> e recarregue</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       TELA 1 — HOME / DASHBOARD
+       ============================================================ -->
+  <section id="tela-home" class="tela">
+    <div id="home-conteudo" class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 2 — ADICIONAR REGISTRO
+       ============================================================ -->
+  <section id="tela-adicionar" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 3 — LISTA DE REGISTROS
+       ============================================================ -->
+  <section id="tela-lista" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 4 — SONHOS & PROJETOS
+       ============================================================ -->
+  <section id="tela-sonhos" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 5 — MENSAGENS DO CORAÇÃO
+       ============================================================ -->
+  <section id="tela-mensagens" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 6 — RELATÓRIOS
+       ============================================================ -->
+  <section id="tela-relatorios" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       TELA 7 — CONFIGURAÇÕES
+       ============================================================ -->
+  <section id="tela-config" class="tela">
+    <div class="conteudo-app px-4 max-w-lg mx-auto"
+         style="padding-top: calc(var(--safe-top) + 1.1rem);"></div>
+  </section>
+
+  <!-- ============================================================
+       CROMO DO APP — FAB, NAVEGAÇÃO INFERIOR, MODAL, TOASTS, CONFETE
+       ============================================================ -->
+  <button id="fab" class="hidden" data-acao="abrir-adicionar" aria-label="Adicionar registro">
+    <i class="fa-solid fa-plus"></i>
+  </button>
+
+  <nav id="bottom-nav" class="hidden">
+    <div class="flex items-stretch justify-around max-w-lg mx-auto">
+      <button class="nav-item flex-1" data-acao="ir" data-valor="home"><i class="fa-solid fa-house"></i><span>Lar</span></button>
+      <button class="nav-item flex-1" data-acao="ir" data-valor="sonhos"><i class="fa-solid fa-star"></i><span>Sonhos</span></button>
+      <button class="nav-item flex-1" data-acao="ir" data-valor="mensagens"><i class="fa-solid fa-heart"></i><span>Recados</span></button>
+      <button class="nav-item flex-1" data-acao="ir" data-valor="relatorios"><i class="fa-solid fa-chart-pie"></i><span>Números</span></button>
+      <button class="nav-item flex-1" data-acao="ir" data-valor="config"><i class="fa-solid fa-gear"></i><span>Ajustes</span></button>
+    </div>
+  </nav>
+
+  <div id="modal-overlay" class="hidden" data-travado="0">
+    <div id="modal-conteudo" class="pop"></div>
+  </div>
+
+  <div id="toast-container"></div>
+  <canvas id="confete-canvas"></canvas>
+
+  <div id="aviso-conexao" class="hidden fixed left-1/2 -translate-x-1/2 z-[110] px-4 py-2 rounded-full text-xs font-extrabold text-white"
+       style="top: calc(var(--safe-top) + .6rem); background: linear-gradient(135deg,#C9A961,#A8873F);">
+    Tô sem conexão, mas quando voltar atualizo tudo 💙
+  </div>
+
+
+<script type="module">
+/* ================================================================================
+   SAÚDE FINANCEIRA DOU E MAY — app web de controle financeiro compartilhado
+   Versão 1.0.0 • Arquivo único • GitHub Pages + Firebase (Auth anônima + Firestore)
+   ================================================================================
+
+   ▸ COMO COLOCAR NO AR (passo a passo)
+   ------------------------------------------------------------------------------
+   1. Crie um projeto no Firebase Console → https://console.firebase.google.com
+   2. No menu lateral, ative:
+        • Authentication → Sign-in method → Anonymous → Ativar
+        • Firestore Database → Criar banco de dados → Modo de produção
+   3. Vá em "Configurações do Projeto" (engrenagem) → aba "Geral" → role até
+      "Seus apps" → clique no ícone Web (</>) → registre o app → copie o objeto
+      firebaseConfig que aparecer.
+   4. Cole esse objeto no `firebaseConfig` logo abaixo (substituindo os valores
+      de exemplo). NUNCA suba essas credenciais em repositório público.
+   5. No Firestore → aba "Regras", cole as regras recomendadas (estão também no
+      modal "Regras do Firestore" dentro do app, na tela de Ajustes):
+
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /{document=**} {
+              allow read, write: if request.auth != null;
+            }
+          }
+        }
+
+      A Auth anônima garante que só quem tem o link do app consegue falar com o
+      banco. Se quiser travar ainda mais, troque a condição por uma lista de UIDs:
+        allow read, write: if request.auth != null &&
+          request.auth.uid in ['UID_DO_DOUGLAS','UID_DA_MAYARA'];
+   6. Suba este arquivo como `index.html` no repositório e ative o GitHub Pages
+      (Settings → Pages → Branch: main / root).
+   7. Abra a URL no celular. Na primeira vez, o app pede para criar o PIN de 4
+      dígitos do casal. Depois é só entrar.
+   8. Instale como app:
+        • Android/Chrome: menu ⋮ → "Adicionar à tela inicial"
+        • iPhone/Safari: botão Compartilhar → "Adicionar à Tela de Início"
+
+   ▸ PRIVACIDADE
+   ------------------------------------------------------------------------------
+   Nenhum dado sai do Firestore do casal. Não há servidor intermediário, não há
+   analytics, não há localStorage para dados financeiros (só para preferências de
+   interface, como o tema claro/escuro e o horário da última visita).
+   ================================================================================ */
+
+
+/* ============================================================
+   1) IMPORTS DO FIREBASE (via CDN, sem bundler)
+   ============================================================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, signInAnonymously, onAuthStateChanged, signOut as fbSignOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, initializeFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, addDoc, getDoc, setDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, getDocs, writeBatch
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+
+/* ============================================================
+   2) CONFIGURAÇÃO DO FIREBASE
+   ------------------------------------------------------------------
+   ⚠️  SUBSTITUA pelas suas credenciais do Firebase Console →
+       Configurações do Projeto → Seus apps → Web.
+   ============================================================ */
+const firebaseConfig = {
+  apiKey:            "COLE_AQUI_SUA_API_KEY",
+  authDomain:        "COLE_AQUI.firebaseapp.com",
+  projectId:         "COLE_AQUI",
+  storageBucket:     "COLE_AQUI.appspot.com",
+  messagingSenderId: "COLE_AQUI",
+  appId:             "COLE_AQUI"
+};
+
+/* Verifica se as credenciais foram realmente preenchidas */
+function firebaseConfigurado(){
+  return !String(firebaseConfig.apiKey).includes('COLE_AQUI')
+      && !String(firebaseConfig.projectId).includes('COLE_AQUI');
+}
+
+
+/* ============================================================
+   3) CONSTANTES DO APP
+   ============================================================ */
+const APP_CONFIG = {
+  nome: 'Saúde Financeira Dou e May',
+  nomeCurto: 'Dou & May',
+  versao: '1.0.0',
+  frases: [
+    'Juntos somos mais fortes 💪',
+    'Cada real guardado é um sonho mais perto ✨',
+    'Sonhar junto é o nosso jeito de planejar 💙💗',
+    'Devagar e sempre, um passo de cada vez 🌿',
+    'Nosso lar cresce quando a gente cuida junto 🏡',
+    'Um café, um caderninho e muitos planos ☕',
+    'O amor também se constrói com carinho e organização 💚',
+    'Hoje é um bom dia para cuidar do nosso futuro 🌟',
+    'Pequenas escolhas, grandes conquistas 🍀',
+    'A gente não precisa ser perfeito, só precisa ser time 🤝'
+  ],
+  categorias: {
+    gasto_casa:     ['mercado','aluguel','luz','água','internet','feira','limpeza','gás','condomínio','outros'],
+    gasto_pessoal:  ['transporte','saúde','roupas','lazer','estudos','cuidados pessoais','restaurante','outros'],
+    gasto_criancas: ['escola','material escolar','brinquedos','roupas','saúde','passeios','alimentação','outros'],
+    guardado:       ['poupança','reserva de emergência','investimento','viagem','aposentadoria','outros']
+  },
+  emojisSonho: ['🌟','🏡','✈️','🚗','🎓','💍','👶','🏖️','🎉','🛋️','📱','💻','🌱','🎁']
+};
+
+const TIPOS = {
+  gasto_casa:     { nome: 'Gastos da Casa',            curto: 'Casa',      icone: 'fa-house',          cor: '#2F7A6B', emoji: '🏠' },
+  gasto_pessoal:  { nome: 'Gastos Pessoais',           curto: 'Pessoais',  icone: 'fa-user',           cor: '#4A90D9', emoji: '👤' },
+  gasto_criancas: { nome: 'Gastos com as Crianças',    curto: 'Crianças',  icone: 'fa-child-reaching', cor: '#C9A961', emoji: '🧸' },
+  guardado:       { nome: 'Dinheiro Guardado',         curto: 'Guardado',  icone: 'fa-piggy-bank',     cor: '#7CC4B1', emoji: '💰' },
+  sonho:          { nome: 'Sonhos & Projetos',         curto: 'Sonhos',    icone: 'fa-star',           cor: '#B06E80', emoji: '🌟' },
+  mensagem:       { nome: 'Mensagens do Coração',      curto: 'Recados',   icone: 'fa-heart',          cor: '#C98B9B', emoji: '💌' }
+};
+
+const COR_AUTOR = {
+  Douglas: '#4A90D9',   // faixa azul
+  Mayara:  '#E08AA6'    // faixa rosa
+};
+
+const REGRAS_FIRESTORE = `rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}`;
+
+
+/* ============================================================
+   4) ESTADO GLOBAL
+   ============================================================ */
+const state = {
+  usuario: null,            // 'Douglas' | 'Mayara'
+  registros: [],            // todos os documentos da coleção 'registros'
+  config: null,             // documento config/casal
+  telaAtual: 'login',
+  filtroTipo: 'gasto_casa',
+  filtroMes: '',            // 'YYYY-MM' ou '' para todos
+  mesRelatorio: '',         // 'YYYY-MM' dos gráficos
+  tipoNovo: 'gasto_casa',   // tipo selecionado na tela de adicionar
+  emojiSonho: '🌟',
+  charts: [],               // instâncias do Chart.js para destruir antes de redesenhar
+  ouvintesAtivos: false,
+  primeiraCarga: true
+};
+
+let homeJaAnimou = false;
+let ultimoSwipe = 0;
+
+
+/* ============================================================
+   5) UTILITÁRIOS — formatação, som, vibração, toast
+   ============================================================ */
+
+/* ---------- Formatação de moeda (BRL) ---------- */
+function formatarMoeda(valor){
+  const n = Number(valor) || 0;
+  return n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+/* ---------- Formatação de números simples ---------- */
+function formatarNumero(valor){
+  return (Number(valor) || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+/* ---------- Conversão segura de qualquer valor em Date ---------- */
+function paraData(v){
+  if (!v) return new Date();
+  if (typeof v.toDate === 'function') return v.toDate();
+  if (v instanceof Date) return v;
+  const d = new Date(v);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/* ---------- Data por extenso curtinha (pt-BR) ---------- */
+function formatarData(v){
+  const d = paraData(v);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function formatarDataLonga(v){
+  const d = paraData(v);
+  return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' });
+}
+
+/* ---------- Data relativa afetuosa ---------- */
+function dataRelativa(v){
+  const d = paraData(v);
+  const hoje = new Date();
+  const zero = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  const alvo = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diff = Math.round((zero - alvo) / 86400000);
+
+  if (diff === 0) return 'hoje';
+  if (diff === 1) return 'ontem';
+  if (diff === -1) return 'amanhã';
+  if (diff > 1 && diff < 7) return `há ${diff} dias`;
+  if (diff > 6 && diff < 30) {
+    const sem = Math.floor(diff / 7);
+    return `há ${sem} ${sem === 1 ? 'semana' : 'semanas'}`;
+  }
+  return formatarData(d);
+}
+
+/* ---------- Chave 'YYYY-MM' de uma data ---------- */
+function chaveMes(d){
+  const dt = paraData(d);
+  return `${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, '0')}`;
+}
+
+/* ---------- Nome bonito do mês ---------- */
+function nomeMes(chave){
+  if (!chave) return '';
+  const [ano, mes] = chave.split('-').map(Number);
+  const d = new Date(ano, mes - 1, 1);
+  const txt = d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+  return txt.charAt(0).toUpperCase() + txt.slice(1);
+}
+
+/* ---------- Escapa HTML para evitar injeção nos templates ---------- */
+function esc(texto){
+  return String(texto == null ? '' : texto)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+/* ---------- Vibração ---------- */
+function vibrar(padrao){
+  try { if (navigator.vibrate) navigator.vibrate(padrao); } catch (e) { /* silencioso */ }
+}
+
+/* ---------- Áudio sintetizado (Web Audio API) ---------- */
+let ctxAudio = null;
+function obterCtxAudio(){
+  try {
+    if (!ctxAudio){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctxAudio = new AC();
+    }
+    if (ctxAudio.state === 'suspended') ctxAudio.resume();
+    return ctxAudio;
+  } catch (e) { return null; }
+}
+
+function tocarNota(freq, atraso, duracao, volume, tipoOnda){
+  const ctx = obterCtxAudio();
+  if (!ctx) return;
+  try {
+    const osc = ctx.createOscillator();
+    const ganho = ctx.createGain();
+    osc.type = tipoOnda || 'sine';
+    osc.frequency.value = freq;
+    const t0 = ctx.currentTime + atraso;
+    ganho.gain.setValueAtTime(0.0001, t0);
+    ganho.gain.linearRampToValueAtTime(volume || 0.1, t0 + 0.02);
+    ganho.gain.exponentialRampToValueAtTime(0.0001, t0 + duracao);
+    osc.connect(ganho);
+    ganho.connect(ctx.destination);
+    osc.start(t0);
+    osc.stop(t0 + duracao + 0.06);
+  } catch (e) { /* silencioso */ }
+}
+
+function playSaveSound(){          // acorde suave C-E-G
+  [523.25, 659.25, 783.99].forEach((f, i) => tocarNota(f, i * 0.085, 0.55, 0.10));
+}
+function playDeleteSound(){        // dois tons descendentes gentis
+  tocarNota(440, 0, 0.22, 0.09, 'triangle');
+  tocarNota(329.63, 0.14, 0.32, 0.09, 'triangle');
+}
+function playMessageSound(){       // sino suave
+  tocarNota(880, 0, 0.5, 0.08);
+  tocarNota(1174.66, 0.11, 0.62, 0.06);
+}
+function playClickSound(){         // clique discreto
+  tocarNota(1400, 0, 0.045, 0.035, 'square');
+}
+function playErrorSound(){         // tom baixinho, nunca agressivo
+  tocarNota(311.13, 0, 0.28, 0.08, 'sine');
+}
+
+/* ---------- Toasts ---------- */
+function mostrarToast(mensagem, icone){
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.innerHTML = `<i class="fa-solid ${icone || 'fa-check'}"></i><span>${esc(mensagem)}</span>`;
+  container.appendChild(el);
+  setTimeout(() => {
+    el.classList.add('saindo');
+    setTimeout(() => el.remove(), 380);
+  }, 2600);
+}
+
+/* ---------- Contagem animada dos valores monetários ---------- */
+function animarValor(el, valorFinal, duracao){
+  if (!el) return;
+  const total = Number(valorFinal) || 0;
+  const dur = duracao || 650;
+  const inicio = performance.now();
+  function passo(t){
+    const p = Math.min((t - inicio) / dur, 1);
+    const suave = 1 - Math.pow(1 - p, 3);
+    el.textContent = formatarMoeda(total * suave);
+    if (p < 1) requestAnimationFrame(passo);
+    else el.textContent = formatarMoeda(total);
+  }
+  requestAnimationFrame(passo);
+}
+
+/* ---------- Confete dourado ---------- */
+function soltarConfete(){
+  const canvas = document.getElementById('confete-canvas');
+  const ctx = canvas.getContext('2d');
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = window.innerWidth * dpr;
+  canvas.height = window.innerHeight * dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  const largura = window.innerWidth;
+  const altura = window.innerHeight;
+  const cores = ['#D9C08C', '#C9A961', '#2F7A6B', '#7CC4B1', '#C98B9B', '#F0E2C2'];
+
+  const partes = Array.from({ length: 130 }, () => ({
+    x: Math.random() * largura,
+    y: -30 - Math.random() * altura * 0.5,
+    l: 5 + Math.random() * 7,
+    vx: (Math.random() - 0.5) * 1.7,
+    vy: 2 + Math.random() * 3.4,
+    rot: Math.random() * Math.PI * 2,
+    vr: (Math.random() - 0.5) * 0.22,
+    cor: cores[Math.floor(Math.random() * cores.length)]
+  }));
+
+  let frames = 0;
+  function loop(){
+    frames++;
+    ctx.clearRect(0, 0, largura, altura);
+    partes.forEach(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      p.vy += 0.025;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.fillStyle = p.cor;
+      ctx.fillRect(-p.l / 2, -p.l / 3, p.l, p.l * 0.62);
+      ctx.restore();
+    });
+    if (frames < 230) requestAnimationFrame(loop);
+    else ctx.clearRect(0, 0, largura, altura);
+  }
+  loop();
+  vibrar([20, 40, 20]);
+}
+
+
+/* ============================================================
+   6) PWA — manifest dinâmico + ícone gerado em canvas
+   ============================================================ */
+function gerarIconePWA(tamanho){
+  const canvas = document.createElement('canvas');
+  canvas.width = tamanho;
+  canvas.height = tamanho;
+  const ctx = canvas.getContext('2d');
+
+  const grad = ctx.createLinearGradient(0, 0, tamanho, tamanho);
+  grad.addColorStop(0, '#2F7A6B');
+  grad.addColorStop(0.55, '#1D4C44');
+  grad.addColorStop(1, '#0E241F');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, tamanho, tamanho);
+
+  // brilho champanhe no canto
+  const brilho = ctx.createRadialGradient(tamanho * 0.82, tamanho * 0.18, 0, tamanho * 0.82, tamanho * 0.18, tamanho * 0.65);
+  brilho.addColorStop(0, 'rgba(217,192,140,.55)');
+  brilho.addColorStop(1, 'rgba(217,192,140,0)');
+  ctx.fillStyle = brilho;
+  ctx.fillRect(0, 0, tamanho, tamanho);
+
+  // coração
+  const s = tamanho / 100;
+  ctx.save();
+  ctx.translate(tamanho / 2, tamanho * 0.46);
+  ctx.scale(s * 0.92, s * 0.92);
+  ctx.beginPath();
+  ctx.moveTo(0, 16);
+  ctx.bezierCurveTo(-30, -6, -22, -30, 0, -16);
+  ctx.bezierCurveTo(22, -30, 30, -6, 0, 16);
+  ctx.closePath();
+  ctx.fillStyle = '#FFFDF9';
+  ctx.fill();
+  ctx.restore();
+
+  // iniciais
+  ctx.fillStyle = 'rgba(255,253,249,.92)';
+  ctx.font = `700 ${tamanho * 0.17}px "Playfair Display", Georgia, serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('D & M', tamanho / 2, tamanho * 0.79);
+
+  return canvas.toDataURL('image/png');
+}
+
+function configurarPWA(){
+  try {
+    const icone192 = gerarIconePWA(192);
+    const icone512 = gerarIconePWA(512);
+
+    const manifest = {
+      name: APP_CONFIG.nome,
+      short_name: APP_CONFIG.nomeCurto,
+      description: 'Nosso cantinho financeiro compartilhado 💙💗',
+      start_url: './',
+      scope: './',
+      display: 'standalone',
+      orientation: 'portrait',
+      background_color: '#0B1420',
+      theme_color: '#2F7A6B',
+      lang: 'pt-BR',
+      icons: [
+        { src: icone192, sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: icone512, sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: icone512, sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+      ]
+    };
+
+    const blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    document.getElementById('manifest-link').href = URL.createObjectURL(blob);
+    document.getElementById('apple-icon').href = icone192;
+    document.getElementById('favicon').href = icone192;
+  } catch (e) { /* PWA é um bônus — segue o jogo mesmo se falhar */ }
+}
+
+
+/* ============================================================
+   7) BLOQUEIO DE GESTOS INDESEJADOS
+   --------------------------------------------------
+   Pull-to-refresh, zoom por pinça, duplo-toque e menu de contexto.
+   ============================================================ */
+function bloquearGestos(){
+  // menu de contexto (toque longo)
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // zoom por pinça no Safari
+  document.addEventListener('gesturestart', e => e.preventDefault());
+  document.addEventListener('gesturechange', e => e.preventDefault());
+  document.addEventListener('gestureend', e => e.preventDefault());
+
+  // pinça via touchmove
+  document.addEventListener('touchmove', e => {
+    if (e.touches && e.touches.length > 1) e.preventDefault();
+  }, { passive: false });
+
+  // duplo-toque (sem atrapalhar digitação)
+  let ultimoToque = 0;
+  document.addEventListener('touchend', e => {
+    const alvo = e.target;
+    const digitando = alvo && (alvo.tagName === 'INPUT' || alvo.tagName === 'TEXTAREA' || alvo.isContentEditable);
+    const agora = Date.now();
+    if (!digitando && agora - ultimoToque <= 320) e.preventDefault();
+    ultimoToque = agora;
+  }, { passive: false });
+
+  // pull-to-refresh
+  document.body.style.overscrollBehavior = 'none';
+}
+
+
+/* ============================================================
+   8) FIREBASE — init, autenticação, Firestore
+   ============================================================ */
+let app, auth, db;
+let listenersRegistros = null;
+let listenersConfig = null;
+
+function inicializarFirebase(){
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+
+  // Cache local (IndexedDB) para funcionar offline e sincronizar depois
+  try {
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
+  } catch (e) {
+    db = getFirestore(app);
+  }
+}
+
+/* ---------- Login anônimo ---------- */
+function entrarAnonimamente(){
+  return new Promise((resolve, reject) => {
+    signInAnonymously(auth).then(() => resolve()).catch(reject);
+  });
+}
+
+/* ---------- Sessão local (só quem está logado nesta aba) ---------- */
+function salvarSessao(nome){ try { sessionStorage.setItem('sf_usuario', nome); } catch (e) {} }
+function lerSessao(){ try { return sessionStorage.getItem('sf_usuario'); } catch (e) { return null; } }
+function limparSessao(){ try { sessionStorage.removeItem('sf_usuario'); } catch (e) {} }
+
+/* ---------- Carrega config/casal uma vez ---------- */
+async function carregarConfig(){
+  const snap = await getDoc(doc(db, 'config', 'casal'));
+  state.config = snap.exists() ? snap.data() : null;
+  return state.config;
+}
+
+/* ---------- Listeners em tempo real ---------- */
+function iniciarListeners(){
+  if (state.ouvintesAtivos) return;
+  state.ouvintesAtivos = true;
+
+  // Registros
+  const q = query(collection(db, 'registros'), orderBy('data', 'desc'));
+  listenersRegistros = onSnapshot(q,
+    (snap) => {
+      const antes = state.registros.length;
+      state.registros = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      esconderAvisoConexao();
+
+      // Nova mensagem do outro? toca o sininho 💌
+      const novasMsgs = state.registros.filter(r => r.tipo === 'mensagem' && !r.lida && r.autor !== state.usuario).length;
+      if (!state.primeiraCarga && snap.docChanges().some(c => c.type === 'added' && c.doc.data().tipo === 'mensagem' && c.doc.data().autor !== state.usuario)){
+        playMessageSound();
+        mostrarToast('Você recebeu um recadinho 💌', 'fa-heart');
+      }
+      // Novo guardado do outro? aviso visual 🎉
+      if (!state.primeiraCarga && snap.docChanges().some(c => c.type === 'added' && c.doc.data().tipo === 'guardado' && c.doc.data().autor !== state.usuario)){
+        playSaveSound();
+        mostrarToast('Guardaram um dinheirinho novo 💚', 'fa-piggy-bank');
+      }
+
+      state.primeiraCarga = false;
+      renderizarTelaAtual();
+      if (antes === 0) atualizarBadges();
+    },
+    (erro) => {
+      mostrarAvisoConexao();
+      mostrarToast('Tô sem conexão, mas quando voltar atualizo tudo 💙', 'fa-cloud');
+    }
+  );
+
+  // Config do casal
+  listenersConfig = onSnapshot(doc(db, 'config', 'casal'),
+    (snap) => {
+      if (snap.exists()) {
+        const anterior = state.config;
+        state.config = snap.data();
+        if (anterior && anterior.pin !== state.config.pin) {
+          mostrarToast('O PIN foi atualizado 🔐', 'fa-key');
+        }
+      }
+    },
+    () => { /* silencioso */ }
+  );
+}
+
+function mostrarAvisoConexao(){
+  const el = document.getElementById('aviso-conexao');
+  if (el) el.classList.remove('hidden');
+}
+function esconderAvisoConexao(){
+  const el = document.getElementById('aviso-conexao');
+  if (el) el.classList.add('hidden');
+}
+
+
+/* ============================================================
+   9) NAVEGAÇÃO ENTRE TELAS
+   ============================================================ */
+function irPara(tela, opcoes){
+  const opt = opcoes || {};
+
+  if (opt.tipo) state.filtroTipo = opt.tipo;
+  if (opt.mes !== undefined) state.filtroMes = opt.mes;
+
+  document.querySelectorAll('.tela').forEach(s => s.classList.remove('ativa'));
+  const el = document.getElementById('tela-' + tela);
+  if (el) el.classList.add('ativa');
+
+  state.telaAtual = tela;
+  window.scrollTo(0, 0);
+
+  if (tela === 'home'){ homeJaAnimou = false; renderizarHome(); }
+  else if (tela === 'adicionar') renderizarAdicionar();
+  else if (tela === 'lista') renderizarLista();
+  else if (tela === 'sonhos') renderizarSonhos();
+  else if (tela === 'mensagens') renderizarMensagens();
+  else if (tela === 'relatorios') renderizarRelatorios();
+  else if (tela === 'config') renderizarConfig();
+
+  atualizarCromo(tela);
+}
+
+/* Re-renderiza só a tela que está aberta (chamado pelos listeners) */
+function renderizarTelaAtual(){
+  switch (state.telaAtual){
+    case 'home':        renderizarHome(); break;
+    case 'adicionar':   /* não re-renderiza para não perder o que está sendo digitado */ break;
+    case 'lista':       renderizarLista(); break;
+    case 'sonhos':      renderizarSonhos(); break;
+    case 'mensagens':   renderizarMensagens(); break;
+    case 'relatorios':  renderizarRelatorios(); break;
+    case 'config':      renderizarConfig(); break;
+  }
+}
+
+/* Mostra/esconde FAB e navegação inferior conforme a tela */
+function atualizarCromo(tela){
+  const logado = !!state.usuario;
+  const nav = document.getElementById('bottom-nav');
+  const fab = document.getElementById('fab');
+
+  const telasComNav = ['home', 'sonhos', 'mensagens', 'relatorios', 'config'];
+  const telasComFab = ['home', 'lista', 'sonhos', 'mensagens'];
+
+  if (nav) nav.classList.toggle('hidden', !(logado && telasComNav.includes(tela)));
+  if (fab) fab.classList.toggle('hidden', !(logado && telasComFab.includes(tela)));
+
+  document.querySelectorAll('.nav-item').forEach(b => {
+    b.classList.toggle('ativo', b.dataset.valor === tela);
+  });
+}
+
+/* Badge de mensagens não lidas na nav */
+function atualizarBadges(){
+  const naoLidas = state.registros.filter(r => r.tipo === 'mensagem' && !r.lida && r.autor !== state.usuario).length;
+  const botao = document.querySelector('.nav-item[data-valor="mensagens"]');
+  if (!botao) return;
+  const antigo = botao.querySelector('.badge');
+  if (antigo) antigo.remove();
+  if (naoLidas > 0){
+    const b = document.createElement('span');
+    b.className = 'badge absolute -top-1 right-1/2 translate-x-4 min-w-[1.1rem] h-[1.1rem] px-1 rounded-full text-[.6rem] font-black text-white flex items-center justify-center';
+    b.style.background = '#C98B9B';
+    b.textContent = naoLidas;
+    botao.style.position = 'relative';
+    botao.appendChild(b);
+  }
+}
+
+
+/* ============================================================
+   10) CÁLCULOS
+   ============================================================ */
+function calcularTotalMes(tipo, autor){
+  const hoje = new Date();
+  return state.registros
+    .filter(r => r.tipo === tipo && (!autor || r.autor === autor))
+    .filter(r => {
+      const d = paraData(r.data);
+      return d.getMonth() === hoje.getMonth() && d.getFullYear() === hoje.getFullYear();
+    })
+    .reduce((soma, r) => soma + (Number(r.valor) || 0), 0);
+}
+
+function calcularTotalGeral(tipo){
+  return state.registros
+    .filter(r => r.tipo === tipo)
+    .reduce((soma, r) => soma + (Number(r.valor) || 0), 0);
+}
+
+function filtrarPorMes(tipo, chaveAnoMes){
+  return state.registros.filter(r => {
+    if (tipo && r.tipo !== tipo) return false;
+    if (chaveAnoMes && chaveMes(r.data) !== chaveAnoMes) return false;
+    return true;
+  });
+}
+
+function diasDesde(data){
+  const d = paraData(data);
+  const hoje = new Date();
+  const zero = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+  const alvo = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  return Math.max(0, Math.round((zero - alvo) / 86400000));
+}
+
+
+/* ============================================================
+   11) RENDERIZAÇÃO — TELA 0 (LOGIN)
+   ============================================================ */
+function renderizarLogin(){
+  const container = document.getElementById('login-opcoes');
+  if (!container) return;
+  container.innerHTML = `
+    <button class="pop w-full rounded-3xl p-5 flex items-center gap-4 text-left transition active:scale-[.97]"
+            style="background: linear-gradient(135deg, rgba(74,144,217,.16), rgba(74,144,217,.06)); border:1px solid rgba(74,144,217,.3);"
+            data-acao="escolher-pessoa" data-valor="Douglas">
+      <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-black"
+            style="background: linear-gradient(135deg,#4A90D9,#2F6FAE);">D</span>
+      <span class="flex-1">
+        <span class="block font-display text-xl leading-tight">Sou o Douglas 💙</span>
+        <span class="block text-xs font-bold opacity-55 mt-0.5">Entrar no nosso cantinho</span>
+      </span>
+      <i class="fa-solid fa-chevron-right opacity-40"></i>
+    </button>
+
+    <button class="pop w-full rounded-3xl p-5 flex items-center gap-4 text-left transition active:scale-[.97]"
+            style="background: linear-gradient(135deg, rgba(224,138,166,.16), rgba(224,138,166,.06)); border:1px solid rgba(224,138,166,.32);"
+            data-acao="escolher-pessoa" data-valor="Mayara">
+      <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-black"
+            style="background: linear-gradient(135deg,#E08AA6,#B06E80);">M</span>
+      <span class="flex-1">
+        <span class="block font-display text-xl leading-tight">Sou a Mayara 💗</span>
+        <span class="block text-xs font-bold opacity-55 mt-0.5">Entrar no nosso cantinho</span>
+      </span>
+      <i class="fa-solid fa-chevron-right opacity-40"></i>
+    </button>
+  `;
+}
+
+
+/* ============================================================
+   12) RENDERIZAÇÃO — TELA 1 (HOME)
+   ============================================================ */
+function renderizarHome(){
+  const el = document.getElementById('home-conteudo');
+  if (!el) return;
+
+  const nomeCurto = state.usuario === 'Douglas' ? 'Dou' : 'May';
+  const emoji = state.usuario === 'Douglas' ? '💙' : '💗';
+  const inicial = state.usuario ? state.usuario.charAt(0) : '?';
+  const corAutor = COR_AUTOR[state.usuario] || '#2F7A6B';
+
+  const guardadoMes    = calcularTotalMes('guardado');
+  const guardadoGeral  = calcularTotalGeral('guardado');
+  const totalCasa      = calcularTotalMes('gasto_casa');
+  const totalPessoal   = calcularTotalMes('gasto_pessoal');
+  const pessoalDou     = calcularTotalMes('gasto_pessoal', 'Douglas');
+  const pessoalMay     = calcularTotalMes('gasto_pessoal', 'Mayara');
+  const totalCriancas  = calcularTotalMes('gasto_criancas');
+
+  const sonhos = state.registros.filter(r => r.tipo === 'sonho');
+  const sonhosAtivos = sonhos.filter(r => (Number(r.progresso) || 0) < (Number(r.meta) || 0)).length;
+  const naoLidas = state.registros.filter(r => r.tipo === 'mensagem' && !r.lida && r.autor !== state.usuario).length;
+
+  // Mensagem do dia (estável ao longo do dia)
+  const frase = APP_CONFIG.frases[new Date().getDate() % APP_CONFIG.frases.length];
+
+  // Dias de jornada
+  const criadoEm = state.config && state.config.criado_em ? state.config.criado_em : null;
+  const diasJornada = criadoEm ? diasDesde(criadoEm) : 0;
+  const dataJuntos = state.config && state.config.data_juntos ? state.config.data_juntos : null;
+  const diasJuntos = dataJuntos ? diasDesde(dataJuntos) : null;
+
+  // Surpresinha: guardado pelo outro desde a última visita
+  const surpresa = obterSurpresa();
+
+  el.innerHTML = `
+    <!-- Cabeçalho -->
+    <header class="flex items-center gap-3 mb-5">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-white text-lg font-black shrink-0"
+           style="background: linear-gradient(135deg, ${corAutor}, ${corAutor}bb); box-shadow:0 10px 20px -10px ${corAutor};">
+        ${inicial}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-display text-2xl leading-tight truncate">Oi, ${nomeCurto}! ${emoji}</p>
+        <p class="text-xs font-bold opacity-55">${nomeMes(chaveMes(new Date()))}</p>
+      </div>
+      <button class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition active:scale-95"
+              style="background: rgba(20,53,48,.07);" data-acao="alternar-tema" aria-label="Alternar tema">
+        <i class="fa-solid ${document.documentElement.classList.contains('dark') ? 'fa-sun' : 'fa-moon'}"></i>
+      </button>
+      <button class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition active:scale-95"
+              style="background: rgba(176,110,128,.12); color:#B06E80;" data-acao="sair" aria-label="Sair">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </header>
+
+    ${surpresa ? `
+      <div class="banner-suave mb-5 pop flex items-start gap-3">
+        <i class="fa-solid fa-piggy-bank mt-0.5" style="color:#2F7A6B"></i>
+        <span class="flex-1">${esc(surpresa)}</span>
+      </div>` : ''}
+
+    <!-- Card grande: Guardado do mês -->
+    <div class="card p-5 mb-5 relative overflow-hidden pop">
+      <div class="absolute -right-8 -top-10 w-40 h-40 rounded-full opacity-20"
+           style="background: radial-gradient(circle, #D9C08C 0%, transparent 70%);"></div>
+      <div class="flex items-center gap-2 mb-1">
+        <i class="fa-solid fa-piggy-bank" style="color:#C9A961"></i>
+        <p class="text-[.72rem] font-black uppercase tracking-wider opacity-55">Guardado este mês</p>
+      </div>
+      <p id="valor-guardado-mes" class="font-display text-4xl leading-none mb-3">R$ 0,00</p>
+      <div class="flex items-center justify-between text-xs font-bold opacity-60">
+        <span>Total acumulado: <strong id="valor-guardado-geral">${formatarMoeda(guardadoGeral)}</strong></span>
+        <span class="px-2 py-1 rounded-full" style="background: rgba(47,122,107,.12); color:#2F7A6B;">
+          <i class="fa-solid fa-arrow-trend-up"></i> nosso cofrinho
+        </span>
+      </div>
+    </div>
+
+    <!-- Cards-resumo -->
+    <div class="grid grid-cols-2 gap-3.5 mb-5">
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="abrir-lista" data-valor="gasto_casa">
+        <span class="faixa-autor" style="background:#2F7A6B"></span>
+        <i class="fa-solid fa-house text-lg mb-2 block" style="color:#2F7A6B"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Gastos da Casa</p>
+        <p class="font-display text-xl leading-none" data-contador="${totalCasa}">R$ 0,00</p>
+      </button>
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="abrir-lista" data-valor="gasto_pessoal">
+        <span class="faixa-autor" style="background:#4A90D9"></span>
+        <i class="fa-solid fa-user text-lg mb-2 block" style="color:#4A90D9"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Gastos Pessoais</p>
+        <p class="font-display text-xl leading-none mb-1" data-contador="${totalPessoal}">R$ 0,00</p>
+        <p class="text-[.62rem] font-bold opacity-55 leading-tight">
+          Dou ${formatarMoeda(pessoalDou)} · May ${formatarMoeda(pessoalMay)}
+        </p>
+      </button>
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="abrir-lista" data-valor="gasto_criancas">
+        <span class="faixa-autor" style="background:#C9A961"></span>
+        <i class="fa-solid fa-child-reaching text-lg mb-2 block" style="color:#C9A961"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Crianças</p>
+        <p class="font-display text-xl leading-none" data-contador="${totalCriancas}">R$ 0,00</p>
+      </button>
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="abrir-lista" data-valor="guardado">
+        <span class="faixa-autor" style="background:#7CC4B1"></span>
+        <i class="fa-solid fa-sack-dollar text-lg mb-2 block" style="color:#7CC4B1"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Guardado total</p>
+        <p class="font-display text-xl leading-none" data-contador="${guardadoGeral}">R$ 0,00</p>
+      </button>
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="ir" data-valor="sonhos">
+        <span class="faixa-autor" style="background:#B06E80"></span>
+        <i class="fa-solid fa-star text-lg mb-2 block" style="color:#B06E80"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Sonhos & Projetos</p>
+        <p class="font-display text-xl leading-none">${sonhosAtivos} <span class="text-sm font-sans font-bold opacity-60">em andamento</span></p>
+      </button>
+
+      <button class="card p-4 text-left relative overflow-hidden transition active:scale-[.97] pop"
+              data-acao="ir" data-valor="mensagens">
+        <span class="faixa-autor" style="background:#C98B9B"></span>
+        <i class="fa-solid fa-heart text-lg mb-2 block" style="color:#C98B9B"></i>
+        <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Mensagens</p>
+        <p class="font-display text-xl leading-none">${naoLidas} <span class="text-sm font-sans font-bold opacity-60">${naoLidas === 1 ? 'nova' : 'novas'}</span></p>
+      </button>
+    </div>
+
+    <!-- Mensagem do dia -->
+    <div class="card p-4 mb-4 flex items-center gap-3 pop">
+      <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+           style="background: linear-gradient(135deg, rgba(217,192,140,.35), rgba(124,196,177,.28));">
+        <i class="fa-solid fa-seedling" style="color:#2F7A6B"></i>
+      </div>
+      <p class="text-sm font-bold leading-snug opacity-80">${esc(frase)}</p>
+    </div>
+
+    <!-- Rodapé afetivo -->
+    <div class="text-center py-5 space-y-1">
+      ${diasJuntos !== null ? `<p class="text-xs font-extrabold opacity-55">Estamos juntos há ${diasJuntos} ${diasJuntos === 1 ? 'dia' : 'dias'} 💙💗</p>` : ''}
+      ${diasJornada > 0 ? `<p class="text-[.68rem] font-bold opacity-40">Juntos nessa jornada financeira há ${diasJornada} ${diasJornada === 1 ? 'dia' : 'dias'}</p>` : ''}
+      <p class="text-[.62rem] font-bold opacity-30">${APP_CONFIG.nome} · v${APP_CONFIG.versao}</p>
+    </div>
+  `;
+
+  // Contagens animadas (só na entrada da tela, para não reiniciar a cada sync)
+  if (!homeJaAnimou){
+    homeJaAnimou = true;
+    animarValor(document.getElementById('valor-guardado-mes'), guardadoMes);
+    el.querySelectorAll('[data-contador]').forEach(node => {
+      animarValor(node, Number(node.dataset.contador) || 0);
+    });
+  } else {
+    document.getElementById('valor-guardado-mes').textContent = formatarMoeda(guardadoMes);
+    el.querySelectorAll('[data-contador]').forEach(node => {
+      node.textContent = formatarMoeda(Number(node.dataset.contador) || 0);
+    });
+  }
+}
+
+/* Verifica se o outro guardou dinheiro desde a última visita */
+function obterSurpresa(){
+  let ultima = 0;
+  try { ultima = Number(localStorage.getItem('sf_ultima_visita') || 0); } catch (e) { ultima = 0; }
+
+  const agora = Date.now();
+  try { localStorage.setItem('sf_ultima_visita', String(agora)); } catch (e) { /* silencioso */ }
+
+  if (!ultima || !state.usuario) return null;
+
+  const novidades = state.registros.filter(r =>
+    r.tipo === 'guardado' &&
+    r.autor !== state.usuario &&
+    paraData(r.data).getTime() > ultima
+  );
+
+  if (!novidades.length) return null;
+
+  const total = novidades.reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const quem = novidades[0].autor === 'Douglas' ? 'Douglas' : 'May';
+  const quando = novidades.length === 1 ? 'hoje' : 'nesses dias';
+  return `${quem} guardou ${formatarMoeda(total)} ${quando}! 💚`;
+}
+
+
+/* ============================================================
+   13) RENDERIZAÇÃO — TELA 2 (ADICIONAR)
+   ============================================================ */
+function renderizarAdicionar(){
+  const el = document.getElementById('tela-adicionar').firstElementChild;
+  if (!el) return;
+
+  el.innerHTML = `
+    <header class="flex items-center gap-3 mb-5">
+      <button class="w-11 h-11 rounded-2xl flex items-center justify-center transition active:scale-95"
+              style="background: rgba(20,53,48,.07);" data-acao="voltar">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <div class="flex-1">
+        <h1 class="font-display titulo-tela">O que vamos registrar? 💚</h1>
+        <p class="text-xs font-bold opacity-55">Escolha o tipo e preencha com carinho</p>
+      </div>
+    </header>
+
+    <div id="grade-tipos" class="grid grid-cols-3 gap-3 mb-6">
+      ${Object.entries(TIPOS).map(([chave, t]) => `
+        <button class="card p-3 flex flex-col items-center gap-1.5 transition active:scale-95 ${state.tipoNovo === chave ? 'ring-2' : ''}"
+                style="border-radius:1.25rem; ${state.tipoNovo === chave ? `box-shadow:0 0 0 2px ${t.cor};` : ''}"
+                data-acao="escolher-tipo" data-valor="${chave}">
+          <i class="fa-solid ${t.icone} text-lg" style="color:${t.cor}"></i>
+          <span class="text-[.62rem] font-black text-center leading-tight">${esc(t.curto)}</span>
+        </button>
+      `).join('')}
+    </div>
+
+    <div id="campos-dinamicos"></div>
+
+    <button class="btn-primario mt-6" data-acao="salvar-novo">
+      <i class="fa-solid fa-check"></i> Salvar com carinho
+    </button>
+
+    <p class="text-center text-[.68rem] font-bold opacity-40 mt-4">
+      Registrando como <strong>${esc(state.usuario)}</strong>
+    </p>
+  `;
+
+  renderizarCamposDinamicos();
+}
+
+/* Campos que mudam conforme o tipo escolhido */
+function renderizarCamposDinamicos(){
+  const box = document.getElementById('campos-dinamicos');
+  if (!box) return;
+
+  const tipo = state.tipoNovo;
+  const hoje = new Date().toISOString().slice(0, 10);
+  const ehFinanceiro = ['gasto_casa', 'gasto_pessoal', 'gasto_criancas', 'guardado'].includes(tipo);
+
+  const seletorAutor = `
+    <div>
+      <label class="rotulo">Quem está registrando</label>
+      <select id="campo-autor" class="campo">
+        <option value="Douglas" ${state.usuario === 'Douglas' ? 'selected' : ''}>Douglas 💙</option>
+        <option value="Mayara" ${state.usuario === 'Mayara' ? 'selected' : ''}>Mayara 💗</option>
+      </select>
+    </div>
+  `;
+
+  if (ehFinanceiro){
+    const categorias = APP_CONFIG.categorias[tipo] || ['outros'];
+    box.innerHTML = `
+      <div class="space-y-4">
+        <div>
+          <label class="rotulo">Valor</label>
+          <input id="campo-valor" class="campo text-2xl font-display" type="text" inputmode="decimal"
+                 placeholder="R$ 0,00" autocomplete="off">
+        </div>
+        <div>
+          <label class="rotulo">Descrição</label>
+          <input id="campo-descricao" class="campo" type="text" maxlength="120"
+                 placeholder="${tipo === 'guardado' ? 'Ex.: reserva de emergência' : 'Ex.: compra do mês'}">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="rotulo">Categoria</label>
+            <select id="campo-categoria" class="campo">
+              ${categorias.map(c => `<option value="${c}">${c.charAt(0).toUpperCase() + c.slice(1)}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label class="rotulo">Data</label>
+            <input id="campo-data" class="campo" type="date" value="${hoje}">
+          </div>
+        </div>
+        ${tipo === 'guardado' ? '' : seletorAutor}
+      </div>
+    `;
+  } else if (tipo === 'sonho'){
+    box.innerHTML = `
+      <div class="space-y-4">
+        <div>
+          <label class="rotulo">Título do sonho</label>
+          <input id="campo-descricao" class="campo" type="text" maxlength="120" placeholder="Ex.: Viagem para a praia 🌊">
+        </div>
+        <div>
+          <label class="rotulo">Detalhes (opcional)</label>
+          <textarea id="campo-detalhes" class="campo" rows="3" maxlength="500"
+                    placeholder="Conta pra gente o que esse sonho significa..."></textarea>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="rotulo">Meta (R$)</label>
+            <input id="campo-meta" class="campo" type="text" inputmode="decimal" placeholder="0,00">
+          </div>
+          <div>
+            <label class="rotulo">Já temos (R$)</label>
+            <input id="campo-progresso" class="campo" type="text" inputmode="decimal" placeholder="0,00">
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="rotulo">Prazo (opcional)</label>
+            <input id="campo-prazo" class="campo" type="date">
+          </div>
+          <div>
+            <label class="rotulo">Prioridade</label>
+            <select id="campo-prioridade" class="campo">
+              <option value="baixa">Baixinha 🌱</option>
+              <option value="media" selected>Média ✨</option>
+              <option value="alta">Alta 🔥</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="rotulo">Carinha do sonho</label>
+          <div id="grade-emojis" class="flex flex-wrap gap-2">
+            ${APP_CONFIG.emojisSonho.map(e => `
+              <button class="w-11 h-11 rounded-xl text-xl transition active:scale-90 ${state.emojiSonho === e ? 'ring-2 ring-esmeralda-500' : ''}"
+                      style="background: rgba(20,53,48,.06);" data-acao="escolher-emoji" data-valor="${e}">${e}</button>
+            `).join('')}
+          </div>
+        </div>
+        ${seletorAutor}
+      </div>
+    `;
+  } else {
+    // Mensagem do coração
+    box.innerHTML = `
+      <div class="space-y-4">
+        <div>
+          <label class="rotulo">Seu recadinho <span id="contador-chars" class="opacity-60">0/500</span></label>
+          <textarea id="campo-mensagem" class="campo" rows="6" maxlength="500"
+                    placeholder="Escreve algo bonito pro nosso mural 💌"></textarea>
+        </div>
+        <div>
+          <label class="rotulo">Carinho extra</label>
+          <div id="grade-emojis" class="flex flex-wrap gap-2">
+            ${['❤️','💙','💗','🌻','✨','🍀','☕','🌙'].map(e => `
+              <button class="w-11 h-11 rounded-xl text-xl transition active:scale-90 ${state.emojiSonho === e ? 'ring-2 ring-rosa-400' : ''}"
+                      style="background: rgba(201,139,155,.14);" data-acao="escolher-emoji" data-valor="${e}">${e}</button>
+            `).join('')}
+          </div>
+        </div>
+        ${seletorAutor}
+      </div>
+    `;
+    const ta = document.getElementById('campo-mensagem');
+    const cont = document.getElementById('contador-chars');
+    if (ta && cont){
+      ta.addEventListener('input', () => { cont.textContent = `${ta.value.length}/500`; });
+    }
+  }
+}
+
+
+/* ============================================================
+   14) RENDERIZAÇÃO — TELA 3 (LISTA)
+   ============================================================ */
+function renderizarLista(){
+  const el = document.getElementById('tela-lista').firstElementChild;
+  if (!el) return;
+
+  const tipo = state.filtroTipo;
+  const info = TIPOS[tipo] || TIPOS.gasto_casa;
+  const mesFiltro = state.filtroMes;
+
+  const registros = filtrarPorMes(tipo, mesFiltro);
+  const total = registros.reduce((s, r) => s + (Number(r.valor) || 0), 0);
+
+  el.innerHTML = `
+    <header class="flex items-center gap-3 mb-5">
+      <button class="w-11 h-11 rounded-2xl flex items-center justify-center transition active:scale-95"
+              style="background: rgba(20,53,48,.07);" data-acao="voltar">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <h1 class="font-display text-2xl leading-tight truncate">${info.emoji} ${esc(info.nome)}</h1>
+        <p class="text-xs font-bold opacity-55">Nossos registros de coração</p>
+      </div>
+    </header>
+
+    <div class="card p-4 mb-4 flex items-center gap-3">
+      <div class="flex-1">
+        <label class="rotulo mb-1">Filtrar por mês</label>
+        <input id="filtro-mes" class="campo" type="month" value="${mesFiltro || ''}">
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-[.68rem] font-black uppercase tracking-wide opacity-55">Total</p>
+        <p class="font-display text-xl leading-none" style="color:${info.cor}">${formatarMoeda(total)}</p>
+      </div>
+    </div>
+
+    ${mesFiltro ? `
+      <button class="w-full text-center text-xs font-extrabold opacity-55 mb-4 underline" data-acao="limpar-filtro">
+        Ver todos os meses
+      </button>` : ''}
+
+    <div id="lista-cards" class="space-y-3">
+      ${registros.length === 0 ? `
+        <div class="card p-8 text-center">
+          <i class="fa-regular fa-folder-open text-3xl mb-3 opacity-30"></i>
+          <p class="font-display text-lg mb-1">Nada por aqui ainda</p>
+          <p class="text-xs font-bold opacity-55">Toque no <strong>+</strong> para registrar o primeiro ${esc(info.curto.toLowerCase())} 💚</p>
+        </div>
+      ` : registros.map(r => cardRegistroHTML(r)).join('')}
+    </div>
+  `;
+
+  // Filtro de mês
+  const inputMes = document.getElementById('filtro-mes');
+  if (inputMes){
+    inputMes.addEventListener('change', () => {
+      state.filtroMes = inputMes.value;
+      renderizarLista();
+    });
+  }
+
+  ativarSwipe(el);
+}
+
+/* HTML de um card de registro (usado na lista e nos detalhes) */
+function cardRegistroHTML(r){
+  const info = TIPOS[r.tipo] || TIPOS.gasto_casa;
+  const cor = COR_AUTOR[r.autor] || '#888';
+  const temValor = typeof r.valor === 'number' && !isNaN(r.valor);
+
+  return `
+    <div class="swipe-wrap relative">
+      <button class="absolute right-0 top-0 bottom-0 w-24 flex flex-col items-center justify-center gap-1 text-white font-black text-[.68rem]"
+              style="background: linear-gradient(135deg,#C0576E,#A03E56);"
+              data-acao="apagar" data-valor="${r.id}">
+        <i class="fa-solid fa-trash text-lg"></i>
+        Apagar
+      </button>
+      <div class="swipe-inner card p-4 relative pl-6 transition-transform"
+           data-acao="abrir-detalhe" data-valor="${r.id}">
+        <span class="faixa-autor" style="background:${cor}"></span>
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 text-base"
+               style="background:${info.cor}1f; color:${info.cor};">
+            <i class="fa-solid ${info.icone}"></i>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="font-bold text-sm leading-snug truncate">${esc(r.descricao || info.nome)}</p>
+            <p class="text-[.68rem] font-bold opacity-55 mt-0.5">
+              ${esc(r.autor || '')} · ${dataRelativa(r.data)}${r.categoria ? ' · ' + esc(r.categoria) : ''}
+            </p>
+          </div>
+          ${temValor ? `<p class="font-display text-lg leading-none shrink-0" style="color:${info.cor}">${formatarMoeda(r.valor)}</p>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+/* Swipe para a esquerda revela o botão apagar */
+function ativarSwipe(container){
+  container.querySelectorAll('.swipe-wrap').forEach(wrap => {
+    if (wrap.dataset.swipeInit) return;
+    wrap.dataset.swipeInit = '1';
+
+    const inner = wrap.querySelector('.swipe-inner');
+    if (!inner) return;
+
+    let startX = 0, startY = 0, dx = 0, aberto = false, movendo = false;
+    const LIMITE = 96;
+
+    inner.addEventListener('touchstart', e => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      dx = aberto ? -LIMITE : 0;
+      movendo = false;
+      inner.style.transition = 'none';
+    }, { passive: true });
+
+    inner.addEventListener('touchmove', e => {
+      const deltaX = e.touches[0].clientX - startX;
+      const deltaY = e.touches[0].clientY - startY;
+
+      if (!movendo && Math.abs(deltaY) > Math.abs(deltaX)) return;
+      movendo = true;
+
+      const base = aberto ? -LIMITE : 0;
+      dx = Math.max(-LIMITE, Math.min(0, base + deltaX));
+      inner.style.transform = `translateX(${dx}px)`;
+    }, { passive: true });
+
+    inner.addEventListener('touchend', () => {
+      inner.style.transition = 'transform .25s cubic-bezier(.22,1,.36,1)';
+      aberto = dx < -LIMITE / 2;
+      inner.style.transform = `translateX(${aberto ? -LIMITE : 0}px)`;
+      if (movendo) ultimoSwipe = Date.now();
+      movendo = false;
+    });
+
+    // Impede que o toque abra os detalhes logo depois de um swipe
+    inner.addEventListener('click', e => {
+      if (Date.now() - ultimoSwipe < 420){ e.stopPropagation(); e.preventDefault(); return; }
+      if (aberto){
+        e.stopPropagation();
+        e.preventDefault();
+        aberto = false;
+        inner.style.transition = 'transform .25s cubic-bezier(.22,1,.36,1)';
+        inner.style.transform = 'translateX(0)';
+      }
+    }, true);
+  });
+}
+
+
+/* ============================================================
+   15) RENDERIZAÇÃO — TELA 4 (SONHOS)
+   ============================================================ */
+function renderizarSonhos(){
+  const el = document.getElementById('tela-sonhos').firstElementChild;
+  if (!el) return;
+
+  const sonhos = state.registros.filter(r => r.tipo === 'sonho');
+
+  const metaTotal = sonhos.reduce((s, r) => s + (Number(r.meta) || 0), 0);
+  const progressoTotal = sonhos.reduce((s, r) => s + (Number(r.progresso) || 0), 0);
+  const pctGeral = metaTotal > 0 ? Math.min(100, Math.round((progressoTotal / metaTotal) * 100)) : 0;
+
+  el.innerHTML = `
+    <header class="mb-5">
+      <h1 class="font-display titulo-tela">Nossos sonhos 🌟</h1>
+      <p class="text-xs font-bold opacity-55 mt-1">Cada real guardado é um pedacinho deles</p>
+    </header>
+
+    ${sonhos.length > 0 ? `
+      <div class="card p-5 mb-5">
+        <div class="flex items-end justify-between mb-3">
+          <div>
+            <p class="text-[.7rem] font-black uppercase tracking-wide opacity-55 mb-1">Juntos já conquistamos</p>
+            <p class="font-display text-2xl leading-none">${formatarMoeda(progressoTotal)}</p>
+          </div>
+          <p class="font-display text-2xl leading-none" style="color:#2F7A6B">${pctGeral}%</p>
+        </div>
+        <div class="barra"><span style="width:${pctGeral}%"></span></div>
+        <p class="text-[.68rem] font-bold opacity-50 mt-2">de ${formatarMoeda(metaTotal)} em sonhos</p>
+      </div>
+    ` : ''}
+
+    ${sonhos.length === 0 ? `
+      <div class="card p-8 text-center">
+        <i class="fa-regular fa-star text-3xl mb-3 opacity-30"></i>
+        <p class="font-display text-lg mb-1">Ainda não sonhamos aqui</p>
+        <p class="text-xs font-bold opacity-55">Toque no <strong>+</strong> e conte pra gente o próximo sonho 💗</p>
+      </div>
+    ` : `
+      <div class="grid grid-cols-1 gap-4">
+        ${sonhos.map(s => {
+          const meta = Number(s.meta) || 0;
+          const prog = Number(s.progresso) || 0;
+          const pct = meta > 0 ? Math.min(100, Math.round((prog / meta) * 100)) : 0;
+          const concluido = meta > 0 && prog >= meta;
+          const prioridade = s.prioridade || 'media';
+          const etiqueta = prioridade === 'alta' ? '🔥 Alta' : prioridade === 'baixa' ? '🌱 Baixa' : '✨ Média';
+
+          return `
+            <button class="card p-5 text-left relative overflow-hidden transition active:scale-[.98] pop"
+                    data-acao="abrir-sonho" data-valor="${s.id}">
+              ${concluido ? `<span class="absolute right-3 top-3 text-[.6rem] font-black px-2 py-1 rounded-full text-white" style="background:#2F7A6B">CONQUISTADO 🎉</span>` : ''}
+              <div class="flex items-start gap-3 mb-3">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shrink-0"
+                     style="background: rgba(217,192,140,.22);">${s.emoji || '🌟'}</div>
+                <div class="flex-1 min-w-0 pr-16">
+                  <p class="font-display text-lg leading-tight">${esc(s.descricao || 'Sonho')}</p>
+                  <p class="text-[.66rem] font-bold opacity-50 mt-0.5">${etiqueta}${s.prazo ? ' · prazo ' + formatarData(s.prazo) : ''}</p>
+                </div>
+              </div>
+              <div class="barra mb-2"><span style="width:${pct}%"></span></div>
+              <div class="flex items-center justify-between text-xs font-bold">
+                <span style="color:#2F7A6B">${formatarMoeda(prog)}</span>
+                <span class="opacity-55">${pct}% de ${formatarMoeda(meta)}</span>
+              </div>
+            </button>
+          `;
+        }).join('')}
+      </div>
+    `}
+  `;
+}
+
+
+/* ============================================================
+   16) RENDERIZAÇÃO — TELA 5 (MENSAGENS)
+   ============================================================ */
+function renderizarMensagens(){
+  const el = document.getElementById('tela-mensagens').firstElementChild;
+  if (!el) return;
+
+  const mensagens = state.registros.filter(r => r.tipo === 'mensagem');
+
+  el.innerHTML = `
+    <header class="flex items-center justify-between mb-5 gap-3">
+      <div>
+        <h1 class="font-display titulo-tela">Mensagens do coração 💌</h1>
+        <p class="text-xs font-bold opacity-55 mt-1">Nosso mural de carinho</p>
+      </div>
+      <button class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 transition active:scale-95 text-white"
+              style="background: linear-gradient(135deg,#C98B9B,#B06E80);"
+              data-acao="nova-mensagem" aria-label="Nova mensagem">
+        <i class="fa-solid fa-pen"></i>
+      </button>
+    </header>
+
+    ${mensagens.length === 0 ? `
+      <div class="card p-8 text-center">
+        <i class="fa-regular fa-heart text-3xl mb-3 opacity-30"></i>
+        <p class="font-display text-lg mb-1">O mural está esperando</p>
+        <p class="text-xs font-bold opacity-55">Escreve um recadinho pro seu amor 💗</p>
+      </div>
+    ` : mensagens.map(m => {
+      const cor = COR_AUTOR[m.autor] || '#C98B9B';
+      const naoLida = !m.lida && m.autor !== state.usuario;
+      return `
+        <div class="swipe-wrap relative mb-3">
+          <button class="absolute right-0 top-0 bottom-0 w-24 flex flex-col items-center justify-center gap-1 text-white font-black text-[.68rem]"
+                  style="background: linear-gradient(135deg,#C0576E,#A03E56);"
+                  data-acao="apagar" data-valor="${m.id}">
+            <i class="fa-solid fa-trash text-lg"></i>
+            Apagar
+          </button>
+          <div class="swipe-inner card p-4 relative pl-6 transition-transform"
+               style="${naoLida ? 'box-shadow:0 0 0 2px rgba(201,139,155,.55), 0 12px 32px -16px rgba(20,53,48,.38);' : ''}"
+               data-acao="ler-mensagem" data-valor="${m.id}">
+            <span class="faixa-autor" style="background:${cor}"></span>
+            ${naoLida ? `<span class="absolute right-3 top-3 text-[.58rem] font-black px-2 py-1 rounded-full text-white" style="background:#C98B9B">NOVA</span>` : ''}
+            <div class="flex items-center gap-2 mb-2">
+              <span class="w-7 h-7 rounded-lg flex items-center justify-center text-white text-[.7rem] font-black"
+                    style="background:${cor}">${esc((m.autor || '?').charAt(0))}</span>
+              <p class="text-xs font-black">${esc(m.autor || '')}</p>
+              <p class="text-[.66rem] font-bold opacity-50 ml-auto pr-8">${dataRelativa(m.data)}</p>
+            </div>
+            ${m.emoji ? `<p class="text-xl mb-1">${m.emoji}</p>` : ''}
+            <p class="text-sm font-semibold leading-relaxed whitespace-pre-wrap">${esc(m.descricao || '')}</p>
+          </div>
+        </div>
+      `;
+    }).join('')}
+  `;
+
+  ativarSwipe(el);
+}
+
+
+/* ============================================================
+   17) RENDERIZAÇÃO — TELA 6 (RELATÓRIOS)
+   ============================================================ */
+function renderizarRelatorios(){
+  const el = document.getElementById('tela-relatorios').firstElementChild;
+  if (!el) return;
+
+  const mesRef = state.mesRelatorio || chaveMes(new Date());
+
+  el.innerHTML = `
+    <header class="mb-5">
+      <h1 class="font-display titulo-tela">Nossos números 📊</h1>
+      <p class="text-xs font-bold opacity-55 mt-1">Sem julgamento, só clareza 💚</p>
+    </header>
+
+    <div class="card p-4 mb-5">
+      <label class="rotulo mb-1">Mês de referência</label>
+      <input id="mes-relatorio" class="campo" type="month" value="${mesRef}">
+    </div>
+
+    <div class="card p-4 mb-4">
+      <p class="font-display text-lg mb-3">Onde nosso dinheiro foi 💚</p>
+      <div style="height: 240px;"><canvas id="grafico-categorias"></canvas></div>
+      <p id="vazio-categorias" class="hidden text-center text-xs font-bold opacity-50 py-6">
+        Nenhum gasto nesse mês 🌿
+      </p>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <p class="font-display text-lg mb-3">Nossa evolução nos últimos 6 meses</p>
+      <div style="height: 230px;"><canvas id="grafico-evolucao"></canvas></div>
+    </div>
+
+    <div class="card p-4 mb-4">
+      <p class="font-display text-lg mb-3">Gastos pessoais: Dou × May</p>
+      <div style="height: 220px;"><canvas id="grafico-comparativo"></canvas></div>
+    </div>
+
+    <div class="card p-5">
+      <p class="font-display text-lg mb-3">Resumo do mês</p>
+      <div class="space-y-2.5 text-sm font-bold">
+        ${resumoSemanalHTML(mesRef)}
+      </div>
+      <p class="text-xs font-bold opacity-60 mt-4 leading-relaxed" id="mensagem-gentil"></p>
+    </div>
+  `;
+
+  const inputMes = document.getElementById('mes-relatorio');
+  if (inputMes){
+    inputMes.addEventListener('change', () => {
+      state.mesRelatorio = inputMes.value;
+      renderizarRelatorios();
+    });
+  }
+
+  desenharGraficos(mesRef);
+  atualizarMensagemGentil(mesRef);
+}
+
+function resumoSemanalHTML(mesRef){
+  const gastos = filtrarPorMes(null, mesRef).filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo));
+  const totalGastos = gastos.reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const guardado = filtrarPorMes('guardado', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const casa = filtrarPorMes('gasto_casa', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const pessoal = filtrarPorMes('gasto_pessoal', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const criancas = filtrarPorMes('gasto_criancas', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const saldo = guardado - totalGastos;
+
+  const linha = (rotulo, valor, cor) => `
+    <div class="flex items-center justify-between">
+      <span class="opacity-70">${rotulo}</span>
+      <span class="font-display" style="color:${cor}">${formatarMoeda(valor)}</span>
+    </div>`;
+
+  return `
+    ${linha('🏠 Casa', casa, '#2F7A6B')}
+    ${linha('👤 Pessoais', pessoal, '#4A90D9')}
+    ${linha('🧸 Crianças', criancas, '#C9A961')}
+    <div class="h-px my-1" style="background: rgba(20,53,48,.10)"></div>
+    ${linha('Total de gastos', totalGastos, '#B06E80')}
+    ${linha('💰 Guardado', guardado, '#2F7A6B')}
+    <div class="h-px my-1" style="background: rgba(20,53,48,.10)"></div>
+    ${linha(saldo >= 0 ? 'Saldo do mês' : 'Diferença do mês', saldo, saldo >= 0 ? '#2F7A6B' : '#C9A961')}
+  `;
+}
+
+function atualizarMensagemGentil(mesRef){
+  const el = document.getElementById('mensagem-gentil');
+  if (!el) return;
+
+  const gastos = filtrarPorMes(null, mesRef).filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo));
+  const totalGastos = gastos.reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const guardado = filtrarPorMes('guardado', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+
+  // Média dos últimos 3 meses (sem contar o mês atual)
+  const hoje = new Date();
+  const medias = [];
+  for (let i = 1; i <= 3; i++){
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    const chave = chaveMes(d);
+    const soma = filtrarPorMes(null, chave)
+      .filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo))
+      .reduce((s, r) => s + (Number(r.valor) || 0), 0);
+    if (soma > 0) medias.push(soma);
+  }
+
+  const media = medias.length ? medias.reduce((a, b) => a + b, 0) / medias.length : 0;
+
+  if (totalGastos === 0 && guardado === 0){
+    el.textContent = 'Esse mês ainda está fresquinho, sem registros. Vamos começar? 🌱';
+  } else if (guardado > totalGastos){
+    el.textContent = 'Olha que lindo: vocês guardaram mais do que gastaram! Isso é cuidado com o futuro 💚✨';
+  } else if (media > 0 && totalGastos > media * 1.25){
+    el.textContent = 'Vamos com calma esse mês? 💚 A vida tem imprevistos, e tudo bem. O importante é que estamos juntos nisso.';
+  } else if (guardado > 0){
+    el.textContent = 'Cada real guardado é um sonho mais perto. Vocês estão indo muito bem 💙💗';
+  } else {
+    el.textContent = 'Sem pressa, sem culpa. O importante é seguir olhando juntos pro mesmo lado 🌿';
+  }
+}
+
+function desenharGraficos(mesRef){
+  // Limpa instâncias anteriores
+  state.charts.forEach(c => { try { c.destroy(); } catch (e) {} });
+  state.charts = [];
+
+  const escuro = document.documentElement.classList.contains('dark');
+  Chart.defaults.font.family = "'Nunito', system-ui, sans-serif";
+  Chart.defaults.font.weight = '700';
+  Chart.defaults.color = escuro ? 'rgba(234,243,240,.72)' : 'rgba(20,53,48,.72)';
+
+  const corGrade = escuro ? 'rgba(255,255,255,.07)' : 'rgba(20,53,48,.07)';
+
+  /* ---------- 1) Pizza por categoria ---------- */
+  const gastosMes = filtrarPorMes(null, mesRef)
+    .filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo));
+
+  const porCategoria = {};
+  gastosMes.forEach(g => {
+    const c = (g.categoria || 'outros');
+    porCategoria[c] = (porCategoria[c] || 0) + (Number(g.valor) || 0);
+  });
+
+  const rotulos = Object.keys(porCategoria);
+  const valores = rotulos.map(r => porCategoria[r]);
+  const paleta = ['#2F7A6B', '#4A90D9', '#C9A961', '#C98B9B', '#7CC4B1', '#B06E80', '#8E5566', '#4FA894', '#E4CB92', '#3A5878'];
+
+  const canvasCat = document.getElementById('grafico-categorias');
+  const vazioCat = document.getElementById('vazio-categorias');
+
+  if (rotulos.length === 0){
+    canvasCat.classList.add('hidden');
+    vazioCat.classList.remove('hidden');
+  } else {
+    canvasCat.classList.remove('hidden');
+    vazioCat.classList.add('hidden');
+    state.charts.push(new Chart(canvasCat, {
+      type: 'doughnut',
+      data: {
+        labels: rotulos.map(r => r.charAt(0).toUpperCase() + r.slice(1)),
+        datasets: [{
+          data: valores,
+          backgroundColor: paleta.slice(0, rotulos.length),
+          borderWidth: 0,
+          hoverOffset: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '62%',
+        plugins: {
+          legend: { position: 'bottom', labels: { boxWidth: 12, boxHeight: 12, padding: 12, font: { size: 11, weight: '700' } } },
+          tooltip: {
+            callbacks: {
+              label: (ctx) => ` ${ctx.label}: ${formatarMoeda(ctx.parsed)}`
+            }
+          }
+        }
+      }
+    }));
+  }
+
+  /* ---------- 2) Evolução dos últimos 6 meses ---------- */
+  const hoje = new Date();
+  const meses = [];
+  for (let i = 5; i >= 0; i--){
+    const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
+    meses.push({
+      chave: chaveMes(d),
+      rotulo: d.toLocaleDateString('pt-BR', { month: 'short' }).replace('.', '')
+    });
+  }
+
+  const serieGastos = meses.map(m => filtrarPorMes(null, m.chave)
+    .filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo))
+    .reduce((s, r) => s + (Number(r.valor) || 0), 0));
+
+  const serieGuardado = meses.map(m => filtrarPorMes('guardado', m.chave)
+    .reduce((s, r) => s + (Number(r.valor) || 0), 0));
+
+  state.charts.push(new Chart(document.getElementById('grafico-evolucao'), {
+    type: 'line',
+    data: {
+      labels: meses.map(m => m.rotulo.charAt(0).toUpperCase() + m.rotulo.slice(1)),
+      datasets: [
+        {
+          label: 'Gastos',
+          data: serieGastos,
+          borderColor: '#B06E80',
+          backgroundColor: 'rgba(176,110,128,.14)',
+          fill: true,
+          tension: 0.38,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointBackgroundColor: '#B06E80'
+        },
+        {
+          label: 'Guardado',
+          data: serieGuardado,
+          borderColor: '#2F7A6B',
+          backgroundColor: 'rgba(47,122,107,.14)',
+          fill: true,
+          tension: 0.38,
+          borderWidth: 3,
+          pointRadius: 4,
+          pointBackgroundColor: '#2F7A6B'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, boxHeight: 12, padding: 12, font: { size: 11, weight: '700' } } },
+        tooltip: { callbacks: { label: (ctx) => ` ${ctx.dataset.label}: ${formatarMoeda(ctx.parsed.y)}` } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: corGrade },
+          ticks: { callback: (v) => 'R$ ' + Number(v).toLocaleString('pt-BR') }
+        }
+      }
+    }
+  }));
+
+  /* ---------- 3) Comparativo Dou × May ---------- */
+  const dou = filtrarPorMes('gasto_pessoal', mesRef).filter(r => r.autor === 'Douglas').reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const may = filtrarPorMes('gasto_pessoal', mesRef).filter(r => r.autor === 'Mayara').reduce((s, r) => s + (Number(r.valor) || 0), 0);
+
+  state.charts.push(new Chart(document.getElementById('grafico-comparativo'), {
+    type: 'bar',
+    data: {
+      labels: ['Douglas 💙', 'Mayara 💗'],
+      datasets: [{
+        data: [dou, may],
+        backgroundColor: ['#4A90D9', '#E08AA6'],
+        borderRadius: 14,
+        barThickness: 62
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: (ctx) => ` ${formatarMoeda(ctx.parsed.y)}` } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: corGrade },
+          ticks: { callback: (v) => 'R$ ' + Number(v).toLocaleString('pt-BR') }
+        }
+      }
+    }
+  }));
+}
+
+
+/* ============================================================
+   18) RENDERIZAÇÃO — TELA 7 (CONFIGURAÇÕES)
+   ============================================================ */
+function renderizarConfig(){
+  const el = document.getElementById('tela-config').firstElementChild;
+  if (!el) return;
+
+  const nomes = (state.config && state.config.nomes) || { douglas: 'Douglas', mayara: 'Mayara' };
+  const totalRegistros = state.registros.length;
+
+  el.innerHTML = `
+    <header class="mb-5">
+      <h1 class="font-display titulo-tela">Ajustes do nosso lar ⚙️</h1>
+      <p class="text-xs font-bold opacity-55 mt-1">${totalRegistros} ${totalRegistros === 1 ? 'registro guardado' : 'registros guardados'}</p>
+    </header>
+
+    <div class="card p-5 mb-4 space-y-4">
+      <p class="font-display text-lg">Nossos nomes</p>
+      <div>
+        <label class="rotulo">Como o Douglas aparece</label>
+        <input id="cfg-nome-douglas" class="campo" type="text" maxlength="30" value="${esc(nomes.douglas || 'Douglas')}">
+      </div>
+      <div>
+        <label class="rotulo">Como a Mayara aparece</label>
+        <input id="cfg-nome-mayara" class="campo" type="text" maxlength="30" value="${esc(nomes.mayara || 'Mayara')}">
+      </div>
+      <div>
+        <label class="rotulo">Quando nossa história começou (opcional)</label>
+        <input id="cfg-data-juntos" class="campo" type="date"
+               value="${state.config && state.config.data_juntos ? new Date(paraData(state.config.data_juntos)).toISOString().slice(0,10) : ''}">
+      </div>
+      <button class="btn-suave" data-acao="salvar-nomes">
+        <i class="fa-solid fa-floppy-disk"></i> Salvar nomes
+      </button>
+    </div>
+
+    <div class="card p-5 mb-4 space-y-4">
+      <p class="font-display text-lg">Segurança 🔐</p>
+      <p class="text-xs font-bold opacity-60 leading-relaxed">
+        O PIN de 4 dígitos é o mesmo para vocês dois. Ele fica guardado no Firestore de vocês.
+      </p>
+      <button class="btn-suave" data-acao="alterar-pin">
+        <i class="fa-solid fa-key"></i> Alterar PIN
+      </button>
+      <button class="btn-suave" data-acao="mostrar-regras">
+        <i class="fa-solid fa-shield-halved"></i> Regras do Firestore
+      </button>
+    </div>
+
+    <div class="card p-5 mb-4 space-y-3">
+      <p class="font-display text-lg">Aparência 🌙</p>
+      <button class="btn-suave" data-acao="alternar-tema">
+        <i class="fa-solid ${document.documentElement.classList.contains('dark') ? 'fa-sun' : 'fa-moon'}"></i>
+        ${document.documentElement.classList.contains('dark') ? 'Usar modo claro' : 'Usar modo escuro'}
+      </button>
+    </div>
+
+    <div class="card p-5 mb-4 space-y-3">
+      <p class="font-display text-lg">Nossos dados 📦</p>
+      <button class="btn-suave" data-acao="exportar">
+        <i class="fa-solid fa-download"></i> Exportar backup (JSON)
+      </button>
+      <button class="btn-suave" style="background:rgba(176,110,128,.14); color:#B06E80; border-color:rgba(176,110,128,.28);"
+              data-acao="apagar-tudo">
+        <i class="fa-solid fa-trash"></i> Apagar todos os registros
+      </button>
+    </div>
+
+    <div class="card p-5 mb-4">
+      <p class="font-display text-lg mb-2">Sair da sessão</p>
+      <p class="text-xs font-bold opacity-60 mb-3 leading-relaxed">
+        Você continua logado só nesta aba. Ao sair, o PIN será pedido de novo.
+      </p>
+      <button class="btn-suave" style="background:rgba(20,53,48,.08); color:inherit; border-color:rgba(20,53,48,.12);" data-acao="sair">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i> Sair agora
+      </button>
+    </div>
+
+    <p class="text-center text-[.65rem] font-bold opacity-35 py-4">
+      ${APP_CONFIG.nome} · v${APP_CONFIG.versao}<br>Feito com carinho pra gente 💙💗
+    </p>
+  `;
+}
+
+
+/* ============================================================
+   19) MODAIS
+   ============================================================ */
+function abrirModal(html, travado){
+  const overlay = document.getElementById('modal-overlay');
+  const conteudo = document.getElementById('modal-conteudo');
+  conteudo.innerHTML = html;
+  overlay.dataset.travado = travado ? '1' : '0';
+  overlay.classList.remove('hidden');
+  requestAnimationFrame(() => overlay.classList.add('visivel'));
+}
+
+function fecharModal(){
+  const overlay = document.getElementById('modal-overlay');
+  overlay.classList.remove('visivel');
+  setTimeout(() => {
+    overlay.classList.add('hidden');
+    document.getElementById('modal-conteudo').innerHTML = '';
+  }, 220);
+}
+
+/* ---------- Teclado de PIN (Promise) ---------- */
+function pedirPin(titulo, subtitulo, travado){
+  return new Promise(resolve => {
+    let valor = '';
+    const dots = Array.from({ length: 4 }, (_, i) => `<span class="pin-dot" data-dot="${i}"></span>`).join('');
+    const teclas = ['1','2','3','4','5','6','7','8','9','','0','del'];
+
+    abrirModal(`
+      <div class="text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4"
+             style="background: linear-gradient(135deg,#2F7A6B,#7CC4B1);">
+          <i class="fa-solid fa-lock text-white text-xl"></i>
+        </div>
+        <h3 class="font-display text-2xl mb-1">${esc(titulo)}</h3>
+        <p class="text-xs font-bold opacity-60 mb-6">${esc(subtitulo || '')}</p>
+
+        <div class="flex justify-center gap-4 mb-7">${dots}</div>
+
+        <div class="grid grid-cols-3 gap-3 max-w-[17rem] mx-auto">
+          ${teclas.map(t => {
+            if (t === '') return '<div></div>';
+            if (t === 'del') return `<button class="pin-key" data-pin="del"><i class="fa-solid fa-delete-left text-base"></i></button>`;
+            return `<button class="pin-key" data-pin="${t}">${t}</button>`;
+          }).join('')}
+        </div>
+
+        <button class="mt-6 text-xs font-extrabold opacity-55 underline" data-cancelar-pin>Cancelar</button>
+      </div>
+    `, travado !== false);
+
+    const conteudo = document.getElementById('modal-conteudo');
+
+    function atualizarDots(){
+      conteudo.querySelectorAll('.pin-dot').forEach((d, i) => {
+        d.classList.toggle('cheio', i < valor.length);
+      });
+    }
+
+    conteudo.querySelectorAll('[data-pin]').forEach(botao => {
+      botao.addEventListener('click', () => {
+        const v = botao.dataset.pin;
+        if (v === 'del') valor = valor.slice(0, -1);
+        else if (valor.length < 4) valor += v;
+
+        atualizarDots();
+
+        if (valor.length === 4){
+          playClickSound();
+          vibrar(18);
+          const concluido = valor;
+          setTimeout(() => { fecharModal(); resolve(concluido); }, 190);
+        } else {
+          playClickSound();
+          vibrar(8);
+        }
+      });
+    });
+
+    const cancelar = conteudo.querySelector('[data-cancelar-pin]');
+    if (cancelar){
+      cancelar.addEventListener('click', () => { fecharModal(); resolve(null); });
+    }
+  });
+}
+
+/* ---------- Modal de detalhes / edição de um registro ---------- */
+function abrirDetalhe(id){
+  const r = state.registros.find(x => x.id === id);
+  if (!r) return;
+
+  const info = TIPOS[r.tipo] || TIPOS.gasto_casa;
+  const cor = COR_AUTOR[r.autor] || '#888';
+  const categorias = APP_CONFIG.categorias[r.tipo] || [];
+  const ehFinanceiro = ['gasto_casa', 'gasto_pessoal', 'gasto_criancas', 'guardado'].includes(r.tipo);
+  const dataISO = paraData(r.data).toISOString().slice(0, 10);
+
+  abrirModal(`
+    <div class="flex items-center gap-3 mb-5">
+      <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-lg shrink-0"
+           style="background:${info.cor}1f; color:${info.cor};">
+        <i class="fa-solid ${info.icone}"></i>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="font-display text-xl leading-tight">${esc(info.nome)}</p>
+        <p class="text-xs font-bold opacity-55">Registrado por ${esc(r.autor || '')} · ${formatarDataLonga(r.data)}</p>
+      </div>
+      <button class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style="background: rgba(20,53,48,.07);" data-acao="fechar-modal">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <span class="faixa-autor rounded-l-2xl" style="background:${cor}; height:100%;"></span>
+
+    <div class="space-y-4">
+      ${ehFinanceiro ? `
+        <div>
+          <label class="rotulo">Valor</label>
+          <input id="edit-valor" class="campo text-2xl font-display" type="text" inputmode="decimal"
+                 value="${formatarNumero(r.valor)}">
+        </div>` : ''}
+
+      <div>
+        <label class="rotulo">Descrição</label>
+        <input id="edit-descricao" class="campo" type="text" maxlength="500" value="${esc(r.descricao || '')}">
+      </div>
+
+      ${ehFinanceiro && categorias.length ? `
+        <div>
+          <label class="rotulo">Categoria</label>
+          <select id="edit-categoria" class="campo">
+            ${categorias.map(c => `<option value="${c}" ${c === r.categoria ? 'selected' : ''}>${c.charAt(0).toUpperCase() + c.slice(1)}</option>`).join('')}
+          </select>
+        </div>` : ''}
+
+      <div>
+        <label class="rotulo">Data</label>
+        <input id="edit-data" class="campo" type="date" value="${dataISO}">
+      </div>
+
+      <div>
+        <label class="rotulo">Autor</label>
+        <select id="edit-autor" class="campo">
+          <option value="Douglas" ${r.autor === 'Douglas' ? 'selected' : ''}>Douglas 💙</option>
+          <option value="Mayara" ${r.autor === 'Mayara' ? 'selected' : ''}>Mayara 💗</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="flex gap-3 mt-6">
+      <button class="btn-suave flex-1" style="background:rgba(176,110,128,.14); color:#B06E80; border-color:rgba(176,110,128,.28);"
+              data-acao="apagar" data-valor="${r.id}">
+        <i class="fa-solid fa-trash"></i> Apagar
+      </button>
+      <button class="btn-primario flex-1" data-acao="salvar-edicao" data-valor="${r.id}">
+        <i class="fa-solid fa-check"></i> Salvar
+      </button>
+    </div>
+  `);
+}
+
+/* ---------- Modal de um sonho ---------- */
+function abrirSonho(id){
+  const s = state.registros.find(x => x.id === id);
+  if (!s) return;
+
+  const meta = Number(s.meta) || 0;
+  const prog = Number(s.progresso) || 0;
+  const pct = meta > 0 ? Math.min(100, Math.round((prog / meta) * 100)) : 0;
+  const falta = Math.max(0, meta - prog);
+
+  abrirModal(`
+    <div class="text-center mb-5">
+      <div class="w-16 h-16 mx-auto rounded-3xl flex items-center justify-center text-3xl mb-3"
+           style="background: rgba(217,192,140,.25);">${s.emoji || '🌟'}</div>
+      <h3 class="font-display text-2xl leading-tight mb-1">${esc(s.descricao || 'Sonho')}</h3>
+      <p class="text-xs font-bold opacity-55">
+        ${s.prazo ? 'Prazo: ' + formatarData(s.prazo) + ' · ' : ''}${s.prioridade === 'alta' ? '🔥 Alta prioridade' : s.prioridade === 'baixa' ? '🌱 Baixa prioridade' : '✨ Média prioridade'}
+      </p>
+    </div>
+
+    ${s.detalhes ? `<p class="text-sm font-semibold leading-relaxed opacity-75 mb-5 text-center">${esc(s.detalhes)}</p>` : ''}
+
+    <div class="card p-4 mb-4">
+      <div class="flex items-end justify-between mb-3">
+        <div>
+          <p class="text-[.68rem] font-black uppercase tracking-wide opacity-55 mb-1">Já guardamos</p>
+          <p class="font-display text-2xl leading-none" style="color:#2F7A6B">${formatarMoeda(prog)}</p>
+        </div>
+        <p class="font-display text-2xl leading-none opacity-70">${pct}%</p>
+      </div>
+      <div class="barra mb-2"><span style="width:${pct}%"></span></div>
+      <p class="text-xs font-bold opacity-60">
+        ${falta > 0 ? `Faltam ${formatarMoeda(falta)} para realizar 💚` : 'Sonho conquistado! 🎉'}
+        · meta de ${formatarMoeda(meta)}
+      </p>
+    </div>
+
+    <button class="btn-primario mb-3" data-acao="add-progresso" data-valor="${s.id}">
+      <i class="fa-solid fa-plus"></i> Adicionar progresso
+    </button>
+
+    <div class="flex gap-3">
+      <button class="btn-suave flex-1" style="background:rgba(176,110,128,.14); color:#B06E80; border-color:rgba(176,110,128,.28);"
+              data-acao="apagar" data-valor="${s.id}">
+        <i class="fa-solid fa-trash"></i> Apagar
+      </button>
+      <button class="btn-suave flex-1" data-acao="fechar-modal">
+        Fechar
+      </button>
+    </div>
+  `);
+}
+
+/* ---------- Modal de confirmação gentil ---------- */
+function confirmar(titulo, texto, rotuloConfirmar){
+  return new Promise(resolve => {
+    abrirModal(`
+      <div class="text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4"
+             style="background: rgba(201,139,155,.18);">
+          <i class="fa-solid fa-circle-question text-xl" style="color:#B06E80"></i>
+        </div>
+        <h3 class="font-display text-xl mb-2">${esc(titulo)}</h3>
+        <p class="text-sm font-semibold opacity-70 leading-relaxed mb-6">${esc(texto)}</p>
+        <div class="flex gap-3">
+          <button class="btn-suave flex-1" data-confirmar="nao">Deixa quieto</button>
+          <button class="btn-primario flex-1" data-confirmar="sim">${esc(rotuloConfirmar || 'Sim, apagar')}</button>
+        </div>
+      </div>
+    `, true);
+
+    const conteudo = document.getElementById('modal-conteudo');
+    conteudo.querySelectorAll('[data-confirmar]').forEach(b => {
+      b.addEventListener('click', () => {
+        fecharModal();
+        resolve(b.dataset.confirmar === 'sim');
+      });
+    });
+  });
+}
+
+
+/* ============================================================
+   20) AÇÕES — CRUD e interações
+   ============================================================ */
+
+/* ---------- Converte texto "1.234,56" ou "1234.56" em número ---------- */
+function paraNumero(texto){
+  if (texto === null || texto === undefined) return 0;
+  let t = String(texto).trim();
+  if (!t) return 0;
+  t = t.replace(/[^\d,.-]/g, '');
+  if (t.includes(',')) t = t.replace(/\./g, '').replace(',', '.');
+  const n = parseFloat(t);
+  return isNaN(n) ? 0 : n;
+}
+
+/* ---------- Salvar novo registro ---------- */
+async function salvarRegistro(){
+  const tipo = state.tipoNovo;
+  const info = TIPOS[tipo];
+
+  const campoDescricao = document.getElementById('campo-descricao') || document.getElementById('campo-mensagem');
+  const campoAutor = document.getElementById('campo-autor');
+
+  const autor = campoAutor ? campoAutor.value : (state.usuario || 'Douglas');
+  const dados = { tipo, autor, lida: false };
+
+  try {
+    if (tipo === 'mensagem'){
+      const texto = campoDescricao ? campoDescricao.value.trim() : '';
+      if (!texto){
+        playErrorSound();
+        mostrarToast('Escreve algo antes de salvar 💗', 'fa-pen');
+        return;
+      }
+      dados.descricao = texto;
+      dados.emoji = state.emojiSonho || '❤️';
+      dados.valor = null;
+    } else if (tipo === 'sonho'){
+      const titulo = campoDescricao ? campoDescricao.value.trim() : '';
+      if (!titulo){
+        playErrorSound();
+        mostrarToast('Dá um nome pro seu sonho 🌟', 'fa-star');
+        return;
+      }
+      dados.descricao = titulo;
+      dados.detalhes = (document.getElementById('campo-detalhes') || {}).value || '';
+      dados.meta = paraNumero((document.getElementById('campo-meta') || {}).value);
+      dados.progresso = paraNumero((document.getElementById('campo-progresso') || {}).value);
+      dados.prazo = (document.getElementById('campo-prazo') || {}).value || null;
+      dados.prioridade = (document.getElementById('campo-prioridade') || {}).value || 'media';
+      dados.emoji = state.emojiSonho || '🌟';
+      dados.valor = null;
+    } else {
+      const valor = paraNumero((document.getElementById('campo-valor') || {}).value);
+      if (!valor || valor <= 0){
+        playErrorSound();
+        mostrarToast('Coloca um valor maior que zero 💚', 'fa-coins');
+        return;
+      }
+      dados.valor = valor;
+      dados.descricao = ((document.getElementById('campo-descricao') || {}).value || '').trim() || info.nome;
+      dados.categoria = (document.getElementById('campo-categoria') || {}).value || 'outros';
+    }
+
+    // Data
+    const campoData = document.getElementById('campo-data');
+    const dataTexto = campoData && campoData.value ? campoData.value : new Date().toISOString().slice(0, 10);
+    dados.data = new Date(dataTexto + 'T12:00:00');
+    dados.criado_em = new Date();
+
+    await addDoc(collection(db, 'registros'), dados);
+
+    playSaveSound();
+    vibrar([25, 35, 25]);
+    mostrarToast('Guardado! ✅', 'fa-check');
+
+    // Volta para a home e limpa o formulário
+    state.tipoNovo = 'gasto_casa';
+    irPara('home');
+
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui salvar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Salvar edição ---------- */
+async function salvarEdicao(id){
+  const r = state.registros.find(x => x.id === id);
+  if (!r) return;
+
+  const atualizacoes = {};
+
+  const campoValor = document.getElementById('edit-valor');
+  if (campoValor) atualizacoes.valor = paraNumero(campoValor.value);
+
+  const campoDesc = document.getElementById('edit-descricao');
+  if (campoDesc) atualizacoes.descricao = campoDesc.value.trim();
+
+  const campoCat = document.getElementById('edit-categoria');
+  if (campoCat) atualizacoes.categoria = campoCat.value;
+
+  const campoAutor = document.getElementById('edit-autor');
+  if (campoAutor) atualizacoes.autor = campoAutor.value;
+
+  const campoData = document.getElementById('edit-data');
+  if (campoData && campoData.value){
+    atualizacoes.data = new Date(campoData.value + 'T12:00:00');
+  }
+
+  try {
+    await updateDoc(doc(db, 'registros', id), atualizacoes);
+    playSaveSound();
+    vibrar(25);
+    mostrarToast('Atualizado! ✅', 'fa-check');
+    fecharModal();
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui atualizar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Apagar registro (com confirmação) ---------- */
+async function apagarRegistro(id){
+  const r = state.registros.find(x => x.id === id);
+  if (!r) return;
+
+  const ok = await confirmar(
+    'Apagar esse registro?',
+    'Ele vai sair do nosso cantinho. Se foi engano, dá pra registrar de novo depois 💚',
+    'Sim, apagar'
+  );
+  if (!ok) return;
+
+  try {
+    await deleteDoc(doc(db, 'registros', id));
+    playDeleteSound();
+    vibrar([15, 30, 15]);
+    mostrarToast('Apagado 💚', 'fa-trash');
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui apagar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Marcar mensagem como lida ---------- */
+async function marcarComoLida(id){
+  const m = state.registros.find(x => x.id === id);
+  if (!m || m.lida) return;
+  try {
+    await updateDoc(doc(db, 'registros', id), { lida: true });
+    playMessageSound();
+  } catch (e) { /* silencioso — não é crítico */ }
+}
+
+/* ---------- Adicionar progresso a um sonho ---------- */
+function abrirModalProgresso(id){
+  const s = state.registros.find(x => x.id === id);
+  if (!s) return;
+
+  const meta = Number(s.meta) || 0;
+  const prog = Number(s.progresso) || 0;
+  const falta = Math.max(0, meta - prog);
+
+  abrirModal(`
+    <div class="text-center mb-5">
+      <div class="w-14 h-14 mx-auto rounded-2xl flex items-center justify-center text-2xl mb-3"
+           style="background: rgba(47,122,107,.15);">${s.emoji || '🌟'}</div>
+      <h3 class="font-display text-xl mb-1">${esc(s.descricao || 'Sonho')}</h3>
+      <p class="text-xs font-bold opacity-60">
+        Faltam ${formatarMoeda(falta)} para realizar
+      </p>
+    </div>
+
+    <div>
+      <label class="rotulo">Quanto vamos adicionar agora?</label>
+      <input id="prog-valor" class="campo text-2xl font-display" type="text" inputmode="decimal" placeholder="R$ 0,00">
+    </div>
+
+    <p class="text-[.7rem] font-bold opacity-50 mt-3 text-center leading-relaxed">
+      Já temos ${formatarMoeda(prog)} de ${formatarMoeda(meta)} 💚
+    </p>
+
+    <div class="flex gap-3 mt-6">
+      <button class="btn-suave flex-1" data-acao="fechar-modal">Cancelar</button>
+      <button class="btn-primario flex-1" data-acao="confirmar-progresso" data-valor="${id}">
+        <i class="fa-solid fa-check"></i> Somar
+      </button>
+    </div>
+  `, true);
+}
+
+async function confirmarProgresso(id){
+  const s = state.registros.find(x => x.id === id);
+  if (!s) return;
+
+  const campo = document.getElementById('prog-valor');
+  const adicional = paraNumero(campo ? campo.value : 0);
+
+  if (!adicional || adicional <= 0){
+    playErrorSound();
+    mostrarToast('Coloca um valor maior que zero 💚', 'fa-coins');
+    return;
+  }
+
+  const meta = Number(s.meta) || 0;
+  const progressoAtual = Number(s.progresso) || 0;
+  const novoProgresso = progressoAtual + adicional;
+  const atingiuMeta = meta > 0 && progressoAtual < meta && novoProgresso >= meta;
+
+  try {
+    await updateDoc(doc(db, 'registros', id), { progresso: novoProgresso });
+    fecharModal();
+    playSaveSound();
+    vibrar([25, 40, 25]);
+    mostrarToast('Progresso atualizado! 💚', 'fa-check');
+
+    if (atingiuMeta){
+      setTimeout(() => {
+        soltarConfete();
+        mostrarToast('Sonho conquistado! 🎉', 'fa-star');
+      }, 400);
+    }
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui atualizar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Nova mensagem (atalho) ---------- */
+function novaMensagem(){
+  state.tipoNovo = 'mensagem';
+  state.emojiSonho = '❤️';
+  irPara('adicionar');
+}
+
+/* ---------- Exportar backup JSON ---------- */
+function exportarBackup(){
+  try {
+    const backup = {
+      app: APP_CONFIG.nome,
+      versao: APP_CONFIG.versao,
+      exportado_em: new Date().toISOString(),
+      config: state.config || null,
+      registros: state.registros
+    };
+
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    const hoje = new Date().toISOString().slice(0, 10);
+    a.href = url;
+    a.download = `saude-financeira-dou-e-may-${hoje}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+
+    playSaveSound();
+    mostrarToast('Backup baixado 📦', 'fa-download');
+  } catch (e) {
+    mostrarToast('Não consegui exportar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Apagar TODOS os registros (confirmação dupla) ---------- */
+async function apagarTudo(){
+  const primeira = await confirmar(
+    'Apagar tudo mesmo?',
+    'Isso vai remover todos os registros de vocês. A configuração (PIN e nomes) continua salva.',
+    'Sim, continuar'
+  );
+  if (!primeira) return;
+
+  const segunda = await confirmar(
+    'Tem certeza absoluta?',
+    'Essa é a última pergunta. Depois não tem como voltar atrás 💙',
+    'Sim, apagar tudo'
+  );
+  if (!segunda) return;
+
+  try {
+    const snap = await getDocs(collection(db, 'registros'));
+    if (snap.empty){
+      mostrarToast('Já estava tudo limpinho ✨', 'fa-check');
+      return;
+    }
+
+    // Remove em lotes de 400 (limite de segurança)
+    const ids = snap.docs.map(d => d.id);
+    for (let i = 0; i < ids.length; i += 400){
+      const lote = writeBatch(db);
+      ids.slice(i, i + 400).forEach(id => lote.delete(doc(db, 'registros', id)));
+      await lote.commit();
+    }
+
+    playDeleteSound();
+    vibrar([20, 40, 20, 40]);
+    mostrarToast('Tudo limpinho por aqui ✨', 'fa-trash');
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui apagar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Alterar PIN ---------- */
+async function alterarPin(){
+  const atual = await pedirPin('PIN atual', 'Digite os 4 dígitos de hoje');
+  if (atual === null) return;
+
+  const pinSalvo = state.config && state.config.pin;
+  if (pinSalvo && atual !== pinSalvo){
+    playErrorSound();
+    vibrar([40, 60, 40]);
+    mostrarToast('PIN diferente, tenta de novo 💙', 'fa-lock');
+    return;
+  }
+
+  const novo = await pedirPin('Novo PIN', 'Escolha 4 dígitos novos');
+  if (novo === null) return;
+
+  const confirma = await pedirPin('Confirma o novo PIN', 'Digite de novo pra garantir');
+  if (confirma === null) return;
+
+  if (novo !== confirma){
+    playErrorSound();
+    mostrarToast('Os PINs não batem, vamos de novo 💙', 'fa-lock');
+    return;
+  }
+
+  try {
+    await setDoc(doc(db, 'config', 'casal'), { pin: novo }, { merge: true });
+    state.config = { ...(state.config || {}), pin: novo };
+    playSaveSound();
+    vibrar(30);
+    mostrarToast('PIN atualizado 🔐', 'fa-key');
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui atualizar o PIN 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Mostrar regras do Firestore ---------- */
+function mostrarRegrasFirestore(){
+  abrirModal(`
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0"
+           style="background: rgba(47,122,107,.15);">
+        <i class="fa-solid fa-shield-halved" style="color:#2F7A6B"></i>
+      </div>
+      <div class="flex-1">
+        <p class="font-display text-xl leading-tight">Regras do Firestore</p>
+        <p class="text-xs font-bold opacity-55">Cole no Firebase Console → Firestore → Regras</p>
+      </div>
+    </div>
+
+    <pre class="regras" id="texto-regras">${esc(REGRAS_FIRESTORE)}</pre>
+
+    <p class="text-[.7rem] font-bold opacity-60 leading-relaxed mt-4">
+      A Auth anônima garante que só quem tem o link do app fala com o banco.
+      Se quiser travar por UID, troque a condição por:
+      <code class="block mt-2 px-2 py-1 rounded bg-black/10 break-all text-[.65rem]">
+        allow read, write: if request.auth != null &amp;&amp; request.auth.uid in ['UID_DOU','UID_MAY'];
+      </code>
+    </p>
+
+    <div class="flex gap-3 mt-5">
+      <button class="btn-suave flex-1" data-acao="copiar-regras">
+        <i class="fa-solid fa-copy"></i> Copiar
+      </button>
+      <button class="btn-primario flex-1" data-acao="fechar-modal">Fechar</button>
+    </div>
+  `, true);
+}
+
+async function copiarRegras(){
+  try {
+    await navigator.clipboard.writeText(REGRAS_FIRESTORE);
+    playClickSound();
+    mostrarToast('Regras copiadas 📋', 'fa-copy');
+  } catch (e) {
+    mostrarToast('Selecione e copie manualmente 💙', 'fa-hand');
+  }
+}
+
+/* ---------- Salvar nomes e data ---------- */
+async function salvarNomes(){
+  const douglas = (document.getElementById('cfg-nome-douglas') || {}).value || 'Douglas';
+  const mayara = (document.getElementById('cfg-nome-mayara') || {}).value || 'Mayara';
+  const dataJuntos = (document.getElementById('cfg-data-juntos') || {}).value || null;
+
+  try {
+    await setDoc(doc(db, 'config', 'casal'), {
+      nomes: { douglas: douglas.trim(), mayara: mayara.trim() },
+      data_juntos: dataJuntos ? new Date(dataJuntos + 'T12:00:00') : null
+    }, { merge: true });
+
+    state.config = {
+      ...(state.config || {}),
+      nomes: { douglas: douglas.trim(), mayara: mayara.trim() },
+      data_juntos: dataJuntos ? new Date(dataJuntos + 'T12:00:00') : null
+    };
+
+    playSaveSound();
+    vibrar(25);
+    mostrarToast('Salvo com carinho ✅', 'fa-check');
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui salvar agora 💙', 'fa-cloud');
+  }
+}
+
+/* ---------- Sair ---------- */
+async function sair(){
+  limparSessao();
+  state.usuario = null;
+  state.registros = [];
+  state.ouvintesAtivos = false;
+
+  if (listenersRegistros){ try { listenersRegistros(); } catch (e) {} listenersRegistros = null; }
+  if (listenersConfig){ try { listenersConfig(); } catch (e) {} listenersConfig = null; }
+
+  try { await fbSignOut(auth); } catch (e) { /* silencioso */ }
+
+  document.getElementById('bottom-nav').classList.add('hidden');
+  document.getElementById('fab').classList.add('hidden');
+  document.getElementById('home-conteudo').innerHTML = '';
+  irPara('login');
+
+  mostrarToast('Até logo! 💙💗', 'fa-hand-wave');
+}
+
+/* ---------- Tema claro/escuro ---------- */
+function aplicarTema(){
+  let tema = 'dark';
+  try { tema = localStorage.getItem('sf_tema') || 'dark'; } catch (e) { tema = 'dark'; }
+  document.documentElement.classList.toggle('dark', tema === 'dark');
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', tema === 'dark' ? '#0B1420' : '#F7F3EC');
+}
+
+function alternarTema(){
+  const escuroAgora = document.documentElement.classList.contains('dark');
+  const novo = escuroAgora ? 'light' : 'dark';
+  document.documentElement.classList.toggle('dark', novo === 'dark');
+  try { localStorage.setItem('sf_tema', novo); } catch (e) {}
+
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', novo === 'dark' ? '#0B1420' : '#F7F3EC');
+
+  playClickSound();
+  vibrar(12);
+
+  // Redesenha a tela atual para refletir o tema
+  if (state.telaAtual === 'home') renderizarHome();
+  else if (state.telaAtual === 'config') renderizarConfig();
+  else if (state.telaAtual === 'relatorios') renderizarRelatorios();
+}
+
+
+/* ============================================================
+   21) FLUXO DE ENTRADA (login / PIN)
+   ============================================================ */
+function renderizarLoginComNomes(){
+  const container = document.getElementById('login-opcoes');
+  if (!container) return;
+
+  const nomes = (state.config && state.config.nomes) || { douglas: 'Douglas', mayara: 'Mayara' };
+
+  container.innerHTML = `
+    <button class="pop w-full rounded-3xl p-5 flex items-center gap-4 text-left transition active:scale-[.97]"
+            style="background: linear-gradient(135deg, rgba(74,144,217,.16), rgba(74,144,217,.06)); border:1px solid rgba(74,144,217,.3);"
+            data-acao="escolher-pessoa" data-valor="Douglas">
+      <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-black"
+            style="background: linear-gradient(135deg,#4A90D9,#2F6FAE);">D</span>
+      <span class="flex-1">
+        <span class="block font-display text-xl leading-tight">Sou o ${esc(nomes.douglas || 'Douglas')} 💙</span>
+        <span class="block text-xs font-bold opacity-55 mt-0.5">Entrar no nosso cantinho</span>
+      </span>
+      <i class="fa-solid fa-chevron-right opacity-40"></i>
+    </button>
+
+    <button class="pop w-full rounded-3xl p-5 flex items-center gap-4 text-left transition active:scale-[.97]"
+            style="background: linear-gradient(135deg, rgba(224,138,166,.16), rgba(224,138,166,.06)); border:1px solid rgba(224,138,166,.32);"
+            data-acao="escolher-pessoa" data-valor="Mayara">
+      <span class="w-14 h-14 rounded-2xl flex items-center justify-center text-white text-xl font-black"
+            style="background: linear-gradient(135deg,#E08AA6,#B06E80);">M</span>
+      <span class="flex-1">
+        <span class="block font-display text-xl leading-tight">Sou a ${esc(nomes.mayara || 'Mayara')} 💗</span>
+        <span class="block text-xs font-bold opacity-55 mt-0.5">Entrar no nosso cantinho</span>
+      </span>
+      <i class="fa-solid fa-chevron-right opacity-40"></i>
+    </button>
+  `;
+}
+
+/* Escolha de quem está entrando + validação do PIN */
+async function escolherPessoa(nome){
+  playClickSound();
+  vibrar(12);
+
+  // Primeira vez: cria o PIN do casal
+  if (!state.config || !state.config.pin){
+    const criado = await criarPinInicial();
+    if (!criado) return;
+  }
+
+  const pin = await pedirPin(
+    `Oi, ${nome === 'Douglas' ? 'Dou' : 'May'}! ${nome === 'Douglas' ? '💙' : '💗'}`,
+    'Digite nosso PIN de 4 dígitos'
+  );
+  if (pin === null) return;
+
+  if (pin !== state.config.pin){
+    playErrorSound();
+    vibrar([50, 60, 50]);
+    mostrarToast('PIN diferente, tenta de novo 💙', 'fa-lock');
+    return;
+  }
+
+  entrarNoApp(nome);
+}
+
+/* Criação do PIN na primeira vez */
+async function criarPinInicial(){
+  abrirModal(`
+    <div class="text-center">
+      <div class="w-16 h-16 mx-auto rounded-3xl flex items-center justify-center mb-4"
+           style="background: linear-gradient(135deg,#2F7A6B,#D9C08C);">
+        <i class="fa-solid fa-heart text-white text-2xl"></i>
+      </div>
+      <h3 class="font-display text-2xl mb-2">Bem-vindos! 💚</h3>
+      <p class="text-sm font-semibold opacity-70 leading-relaxed mb-6">
+        É a primeira vez de vocês por aqui. Vamos criar o <strong>PIN do casal</strong> —
+        quatro dígitos que vocês dois vão usar para entrar.
+      </p>
+      <button class="btn-primario" data-criar-pin>
+        <i class="fa-solid fa-key"></i> Criar nosso PIN
+      </button>
+    </div>
+  `, true);
+
+  const criado = await new Promise(resolve => {
+    const conteudo = document.getElementById('modal-conteudo');
+    conteudo.querySelector('[data-criar-pin]').addEventListener('click', () => {
+      fecharModal();
+      resolve(true);
+    });
+  });
+  if (!criado) return false;
+
+  const pin1 = await pedirPin('Escolha o PIN', 'Quatro dígitos que vocês vão lembrar 💙💗');
+  if (pin1 === null) return false;
+
+  const pin2 = await pedirPin('Confirme o PIN', 'Digite de novo pra garantir');
+  if (pin2 === null) return false;
+
+  if (pin1 !== pin2){
+    playErrorSound();
+    mostrarToast('Os PINs não batem, vamos de novo 💙', 'fa-lock');
+    return false;
+  }
+
+  try {
+    await setDoc(doc(db, 'config', 'casal'), {
+      pin: pin1,
+      nomes: { douglas: 'Douglas', mayara: 'Mayara' },
+      criado_em: new Date(),
+      data_juntos: null
+    }, { merge: true });
+
+    state.config = {
+      ...(state.config || {}),
+      pin: pin1,
+      nomes: { douglas: 'Douglas', mayara: 'Mayara' },
+      criado_em: new Date()
+    };
+
+    playSaveSound();
+    vibrar(30);
+    mostrarToast('PIN criado! Bem-vindos 💚', 'fa-check');
+    return true;
+  } catch (e) {
+    playErrorSound();
+    mostrarToast('Não consegui salvar o PIN 💙', 'fa-cloud');
+    return false;
+  }
+}
+
+/* Entra no app de verdade */
+function entrarNoApp(nome, tocarSom){
+  state.usuario = nome;
+  salvarSessao(nome);
+
+  if (tocarSom !== false){
+    playSaveSound();
+    vibrar(25);
+  }
+
+  iniciarListeners();
+  renderizarLoginComNomes();
+  irPara('home');
+
+  const nomeCurto = nome === 'Douglas' ? 'Dou' : 'May';
+  setTimeout(() => mostrarToast(`Que bom te ver, ${nomeCurto}! 💚`, 'fa-heart'), 260);
+}
+
+
+/* ============================================================
+   22) EVENTOS GLOBAIS (delegação de cliques)
+   ============================================================ */
+function registrarEventosGlobais(){
+
+  document.addEventListener('click', async (evento) => {
+    const botao = evento.target.closest('[data-acao]');
+    if (!botao) return;
+
+    const acao = botao.dataset.acao;
+    const valor = botao.dataset.valor;
+
+    switch (acao){
+      case 'escolher-pessoa':
+        await escolherPessoa(valor);
+        break;
+
+      case 'sair':
+        await sair();
+        break;
+
+      case 'ir':
+        playClickSound();
+        irPara(valor);
+        break;
+
+      case 'voltar':
+        playClickSound();
+        irPara('home');
+        break;
+
+      case 'abrir-adicionar':
+        playClickSound();
+        vibrar(12);
+        state.tipoNovo = 'gasto_casa';
+        state.emojiSonho = '🌟';
+        irPara('adicionar');
+        break;
+
+      case 'escolher-tipo':
+        playClickSound();
+        vibrar(10);
+        state.tipoNovo = valor;
+        state.emojiSonho = valor === 'mensagem' ? '❤️' : '🌟';
+        renderizarAdicionar();
+        break;
+
+      case 'escolher-emoji':
+        playClickSound();
+        state.emojiSonho = valor;
+        document.querySelectorAll('#grade-emojis button').forEach(b => {
+          b.classList.toggle('ring-2', b.dataset.valor === valor);
+        });
+        break;
+
+      case 'salvar-novo':
+        vibrar(15);
+        await salvarRegistro();
+        break;
+
+      case 'abrir-lista':
+        playClickSound();
+        state.filtroTipo = valor;
+        state.filtroMes = '';
+        irPara('lista', { tipo: valor, mes: '' });
+        break;
+
+      case 'limpar-filtro':
+        playClickSound();
+        state.filtroMes = '';
+        renderizarLista();
+        break;
+
+      case 'abrir-detalhe':
+        playClickSound();
+        abrirDetalhe(valor);
+        break;
+
+      case 'salvar-edicao':
+        vibrar(15);
+        await salvarEdicao(valor);
+        break;
+
+      case 'apagar':
+        await apagarRegistro(valor);
+        break;
+
+      case 'abrir-sonho':
+        playClickSound();
+        abrirSonho(valor);
+        break;
+
+      case 'add-progresso':
+        playClickSound();
+        abrirModalProgresso(valor);
+        break;
+
+      case 'confirmar-progresso':
+        vibrar(15);
+        await confirmarProgresso(valor);
+        break;
+
+      case 'ler-mensagem':
+        await marcarComoLida(valor);
+        break;
+
+      case 'nova-mensagem':
+        playClickSound();
+        vibrar(12);
+        novaMensagem();
+        break;
+
+      case 'fechar-modal':
+        playClickSound();
+        fecharModal();
+        break;
+
+      case 'alternar-tema':
+        alternarTema();
+        break;
+
+      case 'alterar-pin':
+        playClickSound();
+        await alterarPin();
+        break;
+
+      case 'mostrar-regras':
+        playClickSound();
+        mostrarRegrasFirestore();
+        break;
+
+      case 'copiar-regras':
+        await copiarRegras();
+        break;
+
+      case 'salvar-nomes':
+        vibrar(15);
+        await salvarNomes();
+        break;
+
+      case 'exportar':
+        exportarBackup();
+        break;
+
+      case 'apagar-tudo':
+        await apagarTudo();
+        break;
+    }
+  });
+
+  // Fechar modal clicando fora (quando não é obrigatório)
+  document.getElementById('modal-overlay').addEventListener('click', (e) => {
+    const overlay = e.target;
+    if (overlay.id !== 'modal-overlay') return;
+    if (overlay.dataset.travado === '1') return;
+    fecharModal();
+  });
+
+  // Primeiro toque em qualquer lugar "acorda" o áudio (exigência dos navegadores)
+  document.addEventListener('touchstart', () => { obterCtxAudio(); }, { once: true, passive: true });
+  document.addEventListener('click', () => { obterCtxAudio(); }, { once: true });
+
+  // Re-renderiza os gráficos quando a tela volta a ficar visível
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.telaAtual === 'relatorios' && state.usuario){
+      renderizarRelatorios();
+    }
+  });
+}
+
+
+/* ============================================================
+   23) BOOT — sequência de inicialização
+   ============================================================ */
+async function iniciarApp(){
+  aplicarTema();
+  configurarPWA();
+  bloquearGestos();
+  registrarEventosGlobais();
+
+  // Firebase ainda não configurado?
+  if (!firebaseConfigurado()){
+    document.querySelectorAll('.tela').forEach(s => s.classList.remove('ativa'));
+    document.getElementById('tela-setup').classList.add('ativa');
+    return;
+  }
+
+  try {
+    inicializarFirebase();
+  } catch (e) {
+    mostrarToast('Tô sem conexão, mas quando voltar atualizo tudo 💙', 'fa-cloud');
+    return;
+  }
+
+  // Autenticação anônima
+  try {
+    await entrarAnonimamente();
+  } catch (e) {
+    mostrarAvisoConexao();
+    document.querySelectorAll('.tela').forEach(s => s.classList.remove('ativa'));
+    document.getElementById('tela-login').classList.add('ativa');
+    document.getElementById('login-opcoes').innerHTML = `
+      <div class="card p-6 text-center">
+        <i class="fa-solid fa-cloud text-3xl mb-3 opacity-40"></i>
+        <p class="font-display text-lg mb-2">Tô sem conexão agora</p>
+        <p class="text-xs font-bold opacity-60 mb-4 leading-relaxed">
+          Confere se a <strong>Auth anônima</strong> está ativada no Firebase Console
+          (Authentication → Sign-in method → Anonymous). Quando voltar, atualizo tudo 💙
+        </p>
+        <button class="btn-suave" onclick="location.reload()">
+          <i class="fa-solid fa-rotate"></i> Tentar de novo
+        </button>
+      </div>
+    `;
+    return;
+  }
+
+  // Carrega a configuração do casal
+  try {
+    await carregarConfig();
+  } catch (e) {
+    state.config = null;
+  }
+
+  // Já tem sessão nesta aba? Entra direto.
+  const sessao = lerSessao();
+  if (sessao && state.config && state.config.pin){
+    entrarNoApp(sessao, false);
+    return;
+  }
+
+  // Senão, mostra a tela de boas-vindas
+  renderizarLoginComNomes();
+  document.querySelectorAll('.tela').forEach(s => s.classList.remove('ativa'));
+  document.getElementById('tela-login').classList.add('ativa');
+  atualizarCromo('login');
+}
+
+// Começa tudo quando o DOM estiver pronto
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', iniciarApp);
+} else {
+  iniciarApp();
+}
+</script>
+</body>
+</html>
