@@ -231,6 +231,11 @@
   }
   #fab:active{ transform: scale(.92); }
 
+    /* CORREÇÃO: garantir que .hidden esconda mesmo com regras de ID */
+  #modal-overlay.hidden,
+  #fab.hidden {
+    display: none !important;
+  }
   /* ---------- Modal ---------- */
   #modal-overlay{
     position: fixed; inset: 0; z-index: 80;
