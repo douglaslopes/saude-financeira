@@ -1078,11 +1078,22 @@ function iniciarListeners(){
   );
 }
 
+let timeoutAvisoConexao = null;
+
 function mostrarAvisoConexao(){
-  const el = document.getElementById('aviso-conexao');
-  if (el) el.classList.remove('hidden');
+  if (timeoutAvisoConexao) return;
+  timeoutAvisoConexao = setTimeout(() => {
+    const el = document.getElementById('aviso-conexao');
+    if (el) el.classList.remove('hidden');
+    timeoutAvisoConexao = null;
+  }, 3000);
 }
+
 function esconderAvisoConexao(){
+  if (timeoutAvisoConexao){
+    clearTimeout(timeoutAvisoConexao);
+    timeoutAvisoConexao = null;
+  }
   const el = document.getElementById('aviso-conexao');
   if (el) el.classList.add('hidden');
 }
