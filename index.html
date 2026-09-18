@@ -507,7 +507,7 @@
 <script type="module">
 /* ================================================================================
    SAÚDE FINANCEIRA DOU E MAY — app web de controle financeiro compartilhado
-   Versão 1.0.0 • Arquivo único • GitHub Pages + Firebase (Auth anônima + Firestore)
+   Versão 1.1.0 • Arquivo único • GitHub Pages + Firebase (Auth anônima + Firestore)
    ================================================================================
 
    ▸ COMO COLOCAR NO AR (passo a passo)
@@ -550,6 +550,15 @@
    Nenhum dado sai do Firestore do casal. Não há servidor intermediário, não há
    analytics, não há localStorage para dados financeiros (só para preferências de
    interface, como o tema claro/escuro e o horário da última visita).
+
+   ▸ NOVIDADES v1.1.0
+   ------------------------------------------------------------------------------
+   • Novo tipo "salário": cada um lança o salário líquido do mês (já subtraído
+     o valor que será guardado).
+   • Card grande da home agora mostra "Saldo do mês" = salário − gastos.
+   • Guardado deixou de contar como saldo — é reserva, fica à parte.
+   • Filtro de mês mostra "Sem filtro" quando nenhum mês está selecionado.
+   • Resumo do mês nos relatórios reorganizado: Gastos, Salário e Guardado.
    ================================================================================ */
 
 
@@ -596,7 +605,7 @@ function firebaseConfigurado(){
 const APP_CONFIG = {
   nome: 'Saúde Financeira Dou e May',
   nomeCurto: 'Dou & May',
-  versao: '1.0.0',
+  versao: '1.1.0',
   frases: [
     'Juntos somos mais fortes 💪',
     'Cada real guardado é um sonho mais perto ✨',
@@ -613,18 +622,20 @@ const APP_CONFIG = {
     gasto_casa:     ['mercado','aluguel','luz','água','internet','feira','limpeza','gás','condomínio','outros'],
     gasto_pessoal:  ['transporte','saúde','roupas','lazer','estudos','cuidados pessoais','restaurante','outros'],
     gasto_criancas: ['escola','material escolar','brinquedos','roupas','saúde','passeios','alimentação','outros'],
-    guardado:       ['poupança','reserva de emergência','investimento','viagem','aposentadoria','outros']
+    guardado:       ['poupança','reserva de emergência','investimento','viagem','aposentadoria','outros'],
+    salario:        ['salário','13º','férias','freelance','extra','outros']
   },
   emojisSonho: ['🌟','🏡','✈️','🚗','🎓','💍','👶','🏖️','🎉','🛋️','📱','💻','🌱','🎁']
 };
 
 const TIPOS = {
-  gasto_casa:     { nome: 'Gastos da Casa',            curto: 'Casa',      icone: 'fa-house',          cor: '#2F7A6B', emoji: '🏠' },
-  gasto_pessoal:  { nome: 'Gastos Pessoais',           curto: 'Pessoais',  icone: 'fa-user',           cor: '#4A90D9', emoji: '👤' },
-  gasto_criancas: { nome: 'Gastos com as Crianças',    curto: 'Crianças',  icone: 'fa-child-reaching', cor: '#C9A961', emoji: '🧸' },
-  guardado:       { nome: 'Dinheiro Guardado',         curto: 'Guardado',  icone: 'fa-piggy-bank',     cor: '#7CC4B1', emoji: '💰' },
-  sonho:          { nome: 'Sonhos & Projetos',         curto: 'Sonhos',    icone: 'fa-star',           cor: '#B06E80', emoji: '🌟' },
-  mensagem:       { nome: 'Mensagens do Coração',      curto: 'Recados',   icone: 'fa-heart',          cor: '#C98B9B', emoji: '💌' }
+  gasto_casa:     { nome: 'Gastos da Casa',            curto: 'Casa',      icone: 'fa-house',           cor: '#2F7A6B', emoji: '🏠' },
+  gasto_pessoal:  { nome: 'Gastos Pessoais',           curto: 'Pessoais',  icone: 'fa-user',            cor: '#4A90D9', emoji: '👤' },
+  gasto_criancas: { nome: 'Gastos com as Crianças',    curto: 'Crianças',  icone: 'fa-child-reaching',  cor: '#C9A961', emoji: '🧸' },
+  guardado:       { nome: 'Dinheiro Guardado',         curto: 'Guardado',  icone: 'fa-piggy-bank',      cor: '#7CC4B1', emoji: '💰' },
+  salario:        { nome: 'Salário Recebido',          curto: 'Salário',   icone: 'fa-money-bill-wave', cor: '#3F8F7E', emoji: '💵' },
+  sonho:          { nome: 'Sonhos & Projetos',         curto: 'Sonhos',    icone: 'fa-star',            cor: '#B06E80', emoji: '🌟' },
+  mensagem:       { nome: 'Mensagens do Coração',      curto: 'Recados',   icone: 'fa-heart',           cor: '#C98B9B', emoji: '💌' }
 };
 
 const COR_AUTOR = {
@@ -1052,6 +1063,11 @@ function iniciarListeners(){
         playSaveSound();
         mostrarToast('Guardaram um dinheirinho novo 💚', 'fa-piggy-bank');
       }
+      // Novo salário do outro? aviso visual 💵
+      if (!state.primeiraCarga && snap.docChanges().some(c => c.type === 'added' && c.doc.data().tipo === 'salario' && c.doc.data().autor !== state.usuario)){
+        playSaveSound();
+        mostrarToast('Chegou o salário do mês 💵', 'fa-money-bill-wave');
+      }
 
       state.primeiraCarga = false;
       renderizarTelaAtual();
@@ -1265,6 +1281,11 @@ function renderizarHome(){
   const pessoalMay     = calcularTotalMes('gasto_pessoal', 'Mayara');
   const totalCriancas  = calcularTotalMes('gasto_criancas');
 
+  // Novo: salário e saldo do mês
+  const salarioMes     = calcularTotalMes('salario');
+  const totalGastosMes = totalCasa + totalPessoal + totalCriancas;
+  const saldoMes       = salarioMes - totalGastosMes;
+
   const sonhos = state.registros.filter(r => r.tipo === 'sonho');
   const sonhosAtivos = sonhos.filter(r => (Number(r.progresso) || 0) < (Number(r.meta) || 0)).length;
   const naoLidas = state.registros.filter(r => r.tipo === 'mensagem' && !r.lida && r.autor !== state.usuario).length;
@@ -1308,20 +1329,28 @@ function renderizarHome(){
         <span class="flex-1">${esc(surpresa)}</span>
       </div>` : ''}
 
-    <!-- Card grande: Guardado do mês -->
-    <div class="card p-5 mb-5 relative overflow-hidden pop">
+    <!-- Card grande: Saldo do mês (salário − gastos) -->
+    <div class="card p-5 mb-5 relative overflow-hidden pop cursor-pointer transition active:scale-[.99]"
+         data-acao="abrir-lista" data-valor="salario">
       <div class="absolute -right-8 -top-10 w-40 h-40 rounded-full opacity-20"
            style="background: radial-gradient(circle, #D9C08C 0%, transparent 70%);"></div>
       <div class="flex items-center gap-2 mb-1">
-        <i class="fa-solid fa-piggy-bank" style="color:#C9A961"></i>
-        <p class="text-[.72rem] font-black uppercase tracking-wider opacity-55">Guardado este mês</p>
+        <i class="fa-solid fa-scale-balanced" style="color:#C9A961"></i>
+        <p class="text-[.72rem] font-black uppercase tracking-wider opacity-55">Saldo do mês</p>
       </div>
-      <p id="valor-guardado-mes" class="font-display text-4xl leading-none mb-3">R$ 0,00</p>
-      <div class="flex items-center justify-between text-xs font-bold opacity-60">
-        <span>Total acumulado: <strong id="valor-guardado-geral">${formatarMoeda(guardadoGeral)}</strong></span>
-        <span class="px-2 py-1 rounded-full" style="background: rgba(47,122,107,.12); color:#2F7A6B;">
-          <i class="fa-solid fa-arrow-trend-up"></i> nosso cofrinho
-        </span>
+      <p id="valor-saldo-mes" class="font-display text-4xl leading-none mb-1"
+         style="color:${saldoMes >= 0 ? '#2F7A6B' : '#B8860B'}">R$ 0,00</p>
+      <p class="text-xs font-bold opacity-55 mb-3">salário recebido − gastos do mês</p>
+      <div class="flex items-center gap-3 pt-3" style="border-top: 1px solid rgba(20,53,48,.08);">
+        <div class="flex-1">
+          <p class="text-[.62rem] font-black uppercase tracking-wide opacity-55 mb-0.5">💵 Recebido</p>
+          <p class="text-sm font-bold">${formatarMoeda(salarioMes)}</p>
+        </div>
+        <div class="flex-1">
+          <p class="text-[.62rem] font-black uppercase tracking-wide opacity-55 mb-0.5">💸 Gasto</p>
+          <p class="text-sm font-bold">${formatarMoeda(totalGastosMes)}</p>
+        </div>
+        <i class="fa-solid fa-chevron-right opacity-30 shrink-0"></i>
       </div>
     </div>
 
@@ -1400,12 +1429,12 @@ function renderizarHome(){
   // Contagens animadas (só na entrada da tela, para não reiniciar a cada sync)
   if (!homeJaAnimou){
     homeJaAnimou = true;
-    animarValor(document.getElementById('valor-guardado-mes'), guardadoMes);
+    animarValor(document.getElementById('valor-saldo-mes'), saldoMes);
     el.querySelectorAll('[data-contador]').forEach(node => {
       animarValor(node, Number(node.dataset.contador) || 0);
     });
   } else {
-    document.getElementById('valor-guardado-mes').textContent = formatarMoeda(guardadoMes);
+    document.getElementById('valor-saldo-mes').textContent = formatarMoeda(saldoMes);
     el.querySelectorAll('[data-contador]').forEach(node => {
       node.textContent = formatarMoeda(Number(node.dataset.contador) || 0);
     });
@@ -1456,8 +1485,24 @@ function renderizarAdicionar(){
       </div>
     </header>
 
+    <button class="w-full rounded-2xl p-4 mb-4 flex items-center gap-3 text-left transition active:scale-[.98]"
+            style="background: linear-gradient(135deg, rgba(217,192,140,.18), rgba(63,143,126,.10)); border: 1.5px dashed rgba(217,192,140,.55); ${state.tipoNovo === 'salario' ? 'box-shadow:0 0 0 2px #3F8F7E;' : ''}"
+            data-acao="escolher-tipo" data-valor="salario">
+      <span class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style="background: rgba(63,143,126,.15); color:#3F8F7E;">
+        <i class="fa-solid fa-money-bill-wave text-lg"></i>
+      </span>
+      <span class="flex-1">
+        <span class="block font-bold text-sm leading-tight">Lançar meu salário do mês 💵</span>
+        <span class="block text-[.66rem] font-bold opacity-55 mt-0.5">Uma vez por mês, quando cair</span>
+      </span>
+      <i class="fa-solid fa-chevron-right opacity-40"></i>
+    </button>
+
+    <p class="text-[.68rem] font-black uppercase tracking-wide opacity-40 mb-2 pl-1">Ou registre um movimento</p>
+
     <div id="grade-tipos" class="grid grid-cols-3 gap-3 mb-6">
-      ${Object.entries(TIPOS).map(([chave, t]) => `
+      ${Object.entries(TIPOS).filter(([chave]) => chave !== 'salario').map(([chave, t]) => `
         <button class="card p-3 flex flex-col items-center gap-1.5 transition active:scale-95 ${state.tipoNovo === chave ? 'ring-2' : ''}"
                 style="border-radius:1.25rem; ${state.tipoNovo === chave ? `box-shadow:0 0 0 2px ${t.cor};` : ''}"
                 data-acao="escolher-tipo" data-valor="${chave}">
@@ -1499,6 +1544,42 @@ function renderizarCamposDinamicos(){
       </select>
     </div>
   `;
+
+  /* ---------- Salário (com aviso sobre o guardado) ---------- */
+  if (tipo === 'salario'){
+    const mesAtual = nomeMes(chaveMes(new Date()));
+    box.innerHTML = `
+      <div class="banner-suave mb-4 flex items-start gap-3">
+        <i class="fa-solid fa-circle-info mt-0.5" style="color:#B8860B"></i>
+        <div>
+          <p class="font-black text-[.72rem] uppercase tracking-wide mb-1">Importante 💡</p>
+          <p class="text-xs font-bold leading-relaxed opacity-85">
+            Informe o valor <strong>já com o dinheiro que vocês vão guardar no mês subtraído</strong>.
+            Assim o saldo fica certinho e o guardado aparece separado, como reserva.
+          </p>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="rotulo">Salário líquido do mês (já sem o guardado)</label>
+          <input id="campo-valor" class="campo text-2xl font-display" type="text" inputmode="decimal"
+                 placeholder="R$ 0,00" autocomplete="off">
+        </div>
+        <div>
+          <label class="rotulo">Descrição (opcional)</label>
+          <input id="campo-descricao" class="campo" type="text" maxlength="120"
+                 placeholder="Ex.: Salário de ${esc(mesAtual)}">
+        </div>
+        <div>
+          <label class="rotulo">Data do recebimento</label>
+          <input id="campo-data" class="campo" type="date" value="${hoje}">
+        </div>
+        ${seletorAutor}
+      </div>
+    `;
+    return;
+  }
 
   if (ehFinanceiro){
     const categorias = APP_CONFIG.categorias[tipo] || ['outros'];
@@ -1633,21 +1714,22 @@ function renderizarLista(){
       </div>
     </header>
 
-    <div class="card p-4 mb-4 flex items-center gap-3">
-      <div class="flex-1">
-        <label class="rotulo mb-1">Filtrar por mês</label>
-        <input id="filtro-mes" class="campo" type="month" value="${mesFiltro || ''}">
+    <div class="card p-4 mb-4">
+      <div class="flex items-end gap-3 mb-2">
+        <div class="flex-1">
+          <label class="rotulo mb-1">Filtrar por mês</label>
+          <input id="filtro-mes" class="campo" type="month" value="${mesFiltro || ''}">
+        </div>
+        <div class="text-right shrink-0">
+          <p class="text-[.68rem] font-black uppercase tracking-wide opacity-55">Total</p>
+          <p class="font-display text-xl leading-none" style="color:${info.cor}">${formatarMoeda(total)}</p>
+        </div>
       </div>
-      <div class="text-right shrink-0">
-        <p class="text-[.68rem] font-black uppercase tracking-wide opacity-55">Total</p>
-        <p class="font-display text-xl leading-none" style="color:${info.cor}">${formatarMoeda(total)}</p>
-      </div>
+      <p class="text-[.7rem] font-bold" style="${mesFiltro ? 'opacity:.55;' : `color:${info.cor};`}">
+        <i class="fa-solid ${mesFiltro ? 'fa-filter' : 'fa-layer-group'} mr-1"></i>
+        ${mesFiltro ? 'Filtrando ' + nomeMes(mesFiltro) : 'Sem filtro — mostrando todos os meses'}
+      </p>
     </div>
-
-    ${mesFiltro ? `
-      <button class="w-full text-center text-xs font-extrabold opacity-55 mb-4 underline" data-acao="limpar-filtro">
-        Ver todos os meses
-      </button>` : ''}
 
     <div id="lista-cards" class="space-y-3">
       ${registros.length === 0 ? `
@@ -1958,30 +2040,50 @@ function renderizarRelatorios(){
   atualizarMensagemGentil(mesRef);
 }
 
+/* Resumo do mês reorganizado: Gastos, Salário, Guardado e Saldo */
 function resumoSemanalHTML(mesRef){
-  const gastos = filtrarPorMes(null, mesRef).filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo));
-  const totalGastos = gastos.reduce((s, r) => s + (Number(r.valor) || 0), 0);
-  const guardado = filtrarPorMes('guardado', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
   const casa = filtrarPorMes('gasto_casa', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
   const pessoal = filtrarPorMes('gasto_pessoal', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
   const criancas = filtrarPorMes('gasto_criancas', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
-  const saldo = guardado - totalGastos;
+  const totalGastos = casa + pessoal + criancas;
 
-  const linha = (rotulo, valor, cor) => `
-    <div class="flex items-center justify-between">
-      <span class="opacity-70">${rotulo}</span>
-      <span class="font-display" style="color:${cor}">${formatarMoeda(valor)}</span>
+  const salario = filtrarPorMes('salario', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const guardado = filtrarPorMes('guardado', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+
+  const saldo = salario - totalGastos;
+
+  const linha = (rotulo, valor, cor, destaque) => `
+    <div class="flex items-center justify-between ${destaque ? 'py-1' : ''}">
+      <span class="${destaque ? 'font-black' : 'opacity-70'}">${rotulo}</span>
+      <span class="font-display ${destaque ? 'text-lg' : ''}" style="color:${cor}">${formatarMoeda(valor)}</span>
     </div>`;
 
   return `
+    <p class="text-[.68rem] font-black uppercase tracking-wide opacity-45 mb-2">💸 Gastos do mês</p>
     ${linha('🏠 Casa', casa, '#2F7A6B')}
     ${linha('👤 Pessoais', pessoal, '#4A90D9')}
     ${linha('🧸 Crianças', criancas, '#C9A961')}
-    <div class="h-px my-1" style="background: rgba(20,53,48,.10)"></div>
-    ${linha('Total de gastos', totalGastos, '#B06E80')}
-    ${linha('💰 Guardado', guardado, '#2F7A6B')}
-    <div class="h-px my-1" style="background: rgba(20,53,48,.10)"></div>
-    ${linha(saldo >= 0 ? 'Saldo do mês' : 'Diferença do mês', saldo, saldo >= 0 ? '#2F7A6B' : '#C9A961')}
+    ${linha('Total de gastos', totalGastos, '#B06E80', true)}
+
+    <div class="h-px my-3" style="background: rgba(20,53,48,.10)"></div>
+
+    <p class="text-[.68rem] font-black uppercase tracking-wide opacity-45 mb-2">💵 Dinheiro que entrou</p>
+    ${linha('Salário recebido', salario, '#3F8F7E', true)}
+
+    <div class="h-px my-3" style="background: rgba(20,53,48,.10)"></div>
+
+    <p class="text-[.68rem] font-black uppercase tracking-wide opacity-45 mb-2">🐷 Reserva (fica fora do saldo)</p>
+    ${linha('Dinheiro guardado', guardado, '#7CC4B1')}
+
+    <div class="h-px my-3" style="background: rgba(20,53,48,.10)"></div>
+
+    <div class="rounded-2xl p-4" style="background: linear-gradient(135deg, rgba(217,192,140,.15), rgba(63,143,126,.10));">
+      ${linha(saldo >= 0 ? '✨ Saldo do mês' : '🌿 Diferença do mês', saldo, saldo >= 0 ? '#2F7A6B' : '#B8860B', true)}
+      <p class="text-[.66rem] font-bold opacity-60 mt-2 leading-relaxed">
+        <i class="fa-solid fa-circle-info mr-1"></i>
+        Saldo = salário recebido − gastos do mês. O guardado fica separado, como reserva.
+      </p>
+    </div>
   `;
 }
 
@@ -1989,32 +2091,35 @@ function atualizarMensagemGentil(mesRef){
   const el = document.getElementById('mensagem-gentil');
   if (!el) return;
 
-  const gastos = filtrarPorMes(null, mesRef).filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo));
-  const totalGastos = gastos.reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const totalGastos = filtrarPorMes(null, mesRef)
+    .filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo))
+    .reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const salario = filtrarPorMes('salario', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
   const guardado = filtrarPorMes('guardado', mesRef).reduce((s, r) => s + (Number(r.valor) || 0), 0);
+  const saldo = salario - totalGastos;
 
   // Média dos últimos 3 meses (sem contar o mês atual)
   const hoje = new Date();
   const medias = [];
   for (let i = 1; i <= 3; i++){
     const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1);
-    const chave = chaveMes(d);
-    const soma = filtrarPorMes(null, chave)
+    const soma = filtrarPorMes(null, chaveMes(d))
       .filter(r => ['gasto_casa', 'gasto_pessoal', 'gasto_criancas'].includes(r.tipo))
       .reduce((s, r) => s + (Number(r.valor) || 0), 0);
     if (soma > 0) medias.push(soma);
   }
-
   const media = medias.length ? medias.reduce((a, b) => a + b, 0) / medias.length : 0;
 
-  if (totalGastos === 0 && guardado === 0){
+  if (totalGastos === 0 && guardado === 0 && salario === 0){
     el.textContent = 'Esse mês ainda está fresquinho, sem registros. Vamos começar? 🌱';
-  } else if (guardado > totalGastos){
-    el.textContent = 'Olha que lindo: vocês guardaram mais do que gastaram! Isso é cuidado com o futuro 💚✨';
+  } else if (salario === 0){
+    el.textContent = 'Quando cair o salário, registra aqui pra gente ver o saldo do mês 💵';
+  } else if (saldo >= 0 && guardado > 0){
+    el.textContent = `Fechamos o mês no azul e ainda guardamos ${formatarMoeda(guardado)}. Que time, hein! 💚✨`;
+  } else if (saldo >= 0){
+    el.textContent = 'Fechamos o mês no azul. Um passo de cada vez 💚';
   } else if (media > 0 && totalGastos > media * 1.25){
     el.textContent = 'Vamos com calma esse mês? 💚 A vida tem imprevistos, e tudo bem. O importante é que estamos juntos nisso.';
-  } else if (guardado > 0){
-    el.textContent = 'Cada real guardado é um sonho mais perto. Vocês estão indo muito bem 💙💗';
   } else {
     el.textContent = 'Sem pressa, sem culpa. O importante é seguir olhando juntos pro mesmo lado 🌿';
   }
@@ -2366,7 +2471,7 @@ function abrirDetalhe(id){
   const info = TIPOS[r.tipo] || TIPOS.gasto_casa;
   const cor = COR_AUTOR[r.autor] || '#888';
   const categorias = APP_CONFIG.categorias[r.tipo] || [];
-  const ehFinanceiro = ['gasto_casa', 'gasto_pessoal', 'gasto_criancas', 'guardado'].includes(r.tipo);
+  const ehFinanceiro = ['gasto_casa', 'gasto_pessoal', 'gasto_criancas', 'guardado', 'salario'].includes(r.tipo);
   const dataISO = paraData(r.data).toISOString().slice(0, 10);
 
   abrirModal(`
@@ -2568,6 +2673,16 @@ async function salvarRegistro(){
       dados.prioridade = (document.getElementById('campo-prioridade') || {}).value || 'media';
       dados.emoji = state.emojiSonho || '🌟';
       dados.valor = null;
+    } else if (tipo === 'salario'){
+      const valor = paraNumero((document.getElementById('campo-valor') || {}).value);
+      if (!valor || valor <= 0){
+        playErrorSound();
+        mostrarToast('Coloca um valor maior que zero 💚', 'fa-coins');
+        return;
+      }
+      dados.valor = valor;
+      dados.descricao = ((document.getElementById('campo-descricao') || {}).value || '').trim() || `Salário de ${nomeMes(chaveMes(new Date()))}`;
+      dados.categoria = 'salário';
     } else {
       const valor = paraNumero((document.getElementById('campo-valor') || {}).value);
       if (!valor || valor <= 0){
